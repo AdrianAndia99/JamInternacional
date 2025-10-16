@@ -3,23 +3,30 @@ using UnityEngine;
 using UnityEngine.Windows.Speech;
 using System;
 using System.Linq;
+using DG.Tweening;
 
 public class MicroTruco : MonoBehaviour
 {
     KeywordRecognizer keywordRecognizer;
     Dictionary<string, Action> keywords;
-    void Start()
+    void Awake()
     {
         keywords = new Dictionary<string, Action>();
-        keywords.Add("azul", Azul);
-        keywords.Add("rojo", Rojo);
-        keywords.Add("verde", Verde);
-        keywords.Add("amarillo", Amarillo);
-        keywords.Add("arriba", Arriba);
+        keywords.Add("blue", Azul);
+        keywords.Add("red", Rojo);
+        keywords.Add("green", Verde);
+        keywords.Add("yellow", Amarillo);
+        keywords.Add("down", Arriba);
+        keywords.Add("Alonso is a woman", Raz);
 
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += WorldRecognized;
         keywordRecognizer.Start();
+    }
+    private void Raz()
+    {
+        transform.DOScale(new Vector3(2, 2, 2), 1);
+        transform.Translate(0, 0, 1);
     }
     private void WorldRecognized(PhraseRecognizedEventArgs word)
     {
@@ -46,6 +53,6 @@ public class MicroTruco : MonoBehaviour
     }
     private void Arriba()
     {
-        transform.Translate(1,0,0);
+        transform.Translate(0,1,0);
     }
 }
