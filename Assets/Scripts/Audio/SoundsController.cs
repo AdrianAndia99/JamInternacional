@@ -34,16 +34,14 @@ public class SoundsController : SingletonPersistent<SoundsController>
     {
         SceneManager.sceneLoaded += HandleSceneLoaded;
 
-        /*if (playOnStartup)
+        if (playOnStartup)
         {
             var activeScene = SceneManager.GetActiveScene();
             if (activeScene.IsValid())
             {
                 PlayClipForScene(activeScene.name);
             }
-        }*/
-
-        sceneAudioEntries[0].audioClip.PlayLoop();
+        }
     }
 
     private void OnDisable()
