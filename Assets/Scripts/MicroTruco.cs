@@ -12,12 +12,13 @@ public class MicroTruco : MonoBehaviour
     void Awake()
     {
         keywords = new Dictionary<string, Action>();
-        keywords.Add("blue", Azul);
-        keywords.Add("red", Rojo);
-        keywords.Add("green", Verde);
-        keywords.Add("yellow", Amarillo);
-        keywords.Add("down", Arriba);
-        keywords.Add("Alonso is a woman", Raz);
+        keywords.Add("blue is peace", Azul);
+        keywords.Add("azul es paz", Azul);
+        keywords.Add("red is anger", Rojo);
+        keywords.Add("green is life", Verde);
+        keywords.Add("yellow is joy", Amarillo);
+        keywords.Add("high is elevation", Arriba);
+        keywords.Add("trick or treat", Raz);
 
         keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += WorldRecognized;
