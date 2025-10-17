@@ -6019,7 +6019,7 @@ GameObject:
   - component: {fileID: 1052667650}
   - component: {fileID: 1052667649}
   m_Layer: 0
-  m_Name: Terrain
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
