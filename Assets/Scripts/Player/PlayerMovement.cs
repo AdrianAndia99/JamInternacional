@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movimiento")]
     public float moveSpeed = 5f;
 
-    [Header("Cámara")]
+    [Header("Cï¿½mara")]
     public Transform cameraTransform;
     public float mouseSensitivity = 1f;
     public float pitchLimit = 85f;
@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
     // -------------------------------
     private void HandleMovement()
     {
-        // Dirección de movimiento relativa a la cámara
+        // Direcciï¿½n de movimiento relativa a la cï¿½mara
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         forward.y = 0f;
@@ -60,18 +60,18 @@ public class PlayerMovement : MonoBehaviour
         right.Normalize();
 
         Vector3 desiredMove = (forward * moveInput.y + right * moveInput.x).normalized * moveSpeed;
-        rb.velocity = new Vector3(desiredMove.x, rb.velocity.y, desiredMove.z);
+        rb.linearVelocity = new Vector3(desiredMove.x, rb.linearVelocity.y, desiredMove.z);
     }
 
     // -------------------------------
-    //        CÁMARA
+    //        Cï¿½MARA
     // -------------------------------
     private void HandleCamera()
     {
-        // Rotación horizontal (yaw)
+        // Rotaciï¿½n horizontal (yaw)
         transform.Rotate(Vector3.up * lookInput.x * mouseSensitivity);
 
-        // Rotación vertical (pitch)
+        // Rotaciï¿½n vertical (pitch)
         xRotation -= lookInput.y * mouseSensitivity;
         xRotation = Mathf.Clamp(xRotation, -pitchLimit, pitchLimit);
         cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);

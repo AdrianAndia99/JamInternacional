@@ -6,11 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
+    path: Assets/Scenes/MenuTest.unity
     guid: d491bae40737b5a49ac82815b650e977
   - enabled: 1
     path: Assets/Scenes/MicroTest.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 68735f0bc1fb71f4abe2e8a19b2b291f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: fb7f13de51746fb4db1e2b01f32298bb, type: 2}
   m_UseUCBPForAssetBundles: 0
