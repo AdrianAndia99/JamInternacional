@@ -988,6 +988,37 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &598402723
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 598402724}
+  m_Layer: 0
+  m_Name: SceneLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &598402724
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598402723}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 441.7451, y: 189.14665, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &667043769
 GameObject:
   m_ObjectHideFlags: 0
@@ -1303,7 +1334,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 839466939}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: f7a2e9a212bfe9645af1baad2feb76b0, type: 2}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Godzilla
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &839466939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2563,8 +2606,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneAudioEntries:
-  - sceneName: Menu
+  - sceneName: MenuTest
     audioClip: {fileID: 11400000, guid: 31b91e3e462f6334a8818fe5602b496f, type: 2}
+    playAsLoop: 1
+    triggerOnSceneLoaded: 1
+  - sceneName: Godzilla
+    audioClip: {fileID: 11400000, guid: e76952023e9c5c0409cbe3c0d4202707, type: 2}
     playAsLoop: 1
     triggerOnSceneLoaded: 1
   playOnStartup: 1
@@ -3665,8 +3712,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1715165617}
   - {fileID: 257900798}
+  - {fileID: 1715165617}
   - {fileID: 991769120}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3985,3 +4032,4 @@ SceneRoots:
   - {fileID: 1571474049}
   - {fileID: 336341167}
   - {fileID: 245623243}
+  - {fileID: 598402724}
