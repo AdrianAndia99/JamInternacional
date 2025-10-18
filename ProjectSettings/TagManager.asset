@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DestroyLimit
   - PoolLimit
+  - Pin
   layers:
   - Default
   - TransparentFX
