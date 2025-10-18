@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: MenuLabels Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: MenuLabels
+  m_TableCollectionNameGuidString: bd602d89dae519f48aafbe76c1200e65
+  m_Entries:
+  - m_Id: 1790680907776
+    m_Key: menuTest.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1926433751040
+    m_Key: menuTest.options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2012333096960
+    m_Key: menuTest.languaje
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2054611681280
+    m_Key: menuTest.Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12264801714176
+    m_Key: menuTest.English
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12326831276032
+    m_Key: menuTest.Spanish
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 2039328388643553510
+  references:
+    version: 2
+    RefIds:
+    - rid: 2039328388643553510
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1760725404383
