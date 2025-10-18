@@ -1,0 +1,4 @@
+public class StreetLightMove : ObjectMovement
+{
+
+}
