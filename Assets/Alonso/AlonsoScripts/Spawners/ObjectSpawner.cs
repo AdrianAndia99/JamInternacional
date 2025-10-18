@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 [System.Serializable]
@@ -17,6 +18,9 @@ public class ObjectSpawner : MonoBehaviour
     [SerializeField] private List<ObstacleEntry> obstacleEntries = new List<ObstacleEntry>();
 
     private Coroutine spawnObstaclesCoroutine;
+
+    [SerializeField] private bool _parentSpawn;
+    [SerializeField] private Transform _parentTranform;
 
     private void Awake()
     {
@@ -80,11 +84,21 @@ public class ObjectSpawner : MonoBehaviour
             Transform selectedPoint = GetRandomSpawnPoint();
             if (spawnPointRotation == false)
             {
-                selected.obstacle.GetObject(selectedPoint.position, Quaternion.identity);
+                GameObject newObject = selected.obstacle.GetObject(selectedPoint.position, Quaternion.identity);
+
+                if (_parentSpawn)
+                {
+                    newObject.transform.SetParent(_parentTranform);
+                }
             }
             else
             {
-                selected.obstacle.GetObject(selectedPoint.position, selectedPoint.rotation);
+                GameObject newObject = selected.obstacle.GetObject(selectedPoint.position, selectedPoint.rotation);
+
+                if (_parentSpawn)
+                {
+                    newObject.transform.SetParent(_parentTranform);
+                }
             }
             yield return new WaitForSeconds(spawnRate);
         }

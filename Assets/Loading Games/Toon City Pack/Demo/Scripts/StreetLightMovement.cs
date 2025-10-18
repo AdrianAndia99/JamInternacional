@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StreetLight : MonoBehaviour {
+public class StreetLightMovement : MonoBehaviour {
 
     public Light[] lights;
     public bool isOn;
