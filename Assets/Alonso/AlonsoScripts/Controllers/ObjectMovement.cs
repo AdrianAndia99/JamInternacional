@@ -25,7 +25,7 @@ public abstract class ObjectMovement : MonoBehaviour
         }
         else if (other.gameObject.tag == "DestroyLimit")
         {
-            Destroy(other.gameObject);
+            Destroy(gameObject);
         }
         else if (other.gameObject.tag == "Player")
         {

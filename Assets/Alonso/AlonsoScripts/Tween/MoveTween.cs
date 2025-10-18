@@ -18,5 +18,5 @@ public class MoveTween : BaseTween
         .SetEase(_ease)
         .OnComplete(() => onComplete?.Invoke());
     }
-    public void SetTargetTransform(Transform targetTransform) => _targetTransform.position = targetTransform.position;
+    public void SetTargetTransform(Transform targetTransform) => _targetTransform = targetTransform;
 }

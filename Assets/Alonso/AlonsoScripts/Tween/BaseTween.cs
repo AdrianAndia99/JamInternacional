@@ -14,7 +14,7 @@ public abstract class BaseTween : MonoBehaviour
     public UnityEvent onComplete;
 
     protected Tween _currentTween;
-    protected void KillCurrent()
+    public void KillCurrent()
     {
         if (_currentTween != null && _currentTween.IsActive())
         {
