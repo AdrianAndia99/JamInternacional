@@ -1,0 +1,152 @@
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    GODZILLA ATTACK SEQUENCE TIMELINE                        ║
+║                          (25 segundos totales)                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+PRESIONA ESPACIO ──────────────────────────────────────────────────── FIN
+│                                                                          │
+▼                                                                          ▼
+
+┌──────────────────────────────────┬──────────────────────────────────────┐
+│         FASE 1: TRANSICIÓN       │      FASE 2: DISPARO + LÁSER         │
+│          (0s - 16s)              │          (16s - 25s)                 │
+└──────────────────────────────────┴──────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  AUDIO: GodzillaRayoDisparo (25 segundos)                               │
+│  ████████████████████████████████████████████████████████████████████   │
+│  0s                                                                  25s │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ANIMACIONES:                                                            │
+│  ┌─────┐ ┌───────────┐ ┌────────────────┐ ┌──────────────────────────┐ │
+│  │Idle │→│   Init    │→│ Shoot_Previous │→│         Shoot            │ │
+│  └─────┘ └───────────┘ └────────────────┘ └──────────────────────────┘ │
+│  0s                                       16s                        25s │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  LÁSER:                                                                  │
+│                                          ┌───────────────────────────┐   │
+│  OFF                                     │    LÁSER ACTIVO (9s)      │   │
+│  ─────────────────────────────────────── └───────────────────────────┘   │
+│  0s                                    16s    ↑ grow 0.3s         25s    │
+│                                               ↓ fade 0.3s                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ROTACIÓN:                                                               │
+│  ╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳ BLOQUEADA ╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳╳│
+│  ↑ Rotando                                                 Vuelve a rotar│
+│  0s                                                                   25s │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════
+                            EVENTOS CLAVE
+═══════════════════════════════════════════════════════════════════════════
+
+⏱️  0.00s  → [ESPACIO] Presionado
+           → Audio inicia
+           → Rotación BLOQUEADA
+           → Trigger "Attack" activado
+           → Guardar dirección
+
+⏱️  0.00s  → Animator: Idle → Init
+     - 16s
+
+⏱️  16.00s → Animator: Shoot_Previous → Shoot
+           → ¡DISPARO DEL LÁSER!
+           → Láser crece (0.3s)
+
+⏱️  16.30s → Láser completamente extendido
+           → Se mantiene activo
+
+⏱️  24.70s → Láser comienza a desvanecerse (fade 0.3s)
+
+⏱️  25.00s → Audio TERMINA
+           → Láser OFF
+           → Rotación DESBLOQUEADA
+           → Volver a Idle
+           → Listo para otro ataque
+
+
+═══════════════════════════════════════════════════════════════════════════
+                         CÓDIGO SIMPLIFICADO
+═══════════════════════════════════════════════════════════════════════════
+
+void Update()
+{
+    if (isRotating)
+        RotateModel();  // Rota entre -40° y 40°
+    
+    if (Input.GetKeyDown(Space) && !isAttacking)
+        StartAttackSequence();  // Inicia todo
+    
+    if (isAttacking)
+        HandleAttackSequence();  // Maneja el timing
+}
+
+void HandleAttackSequence()
+{
+    attackTimer += Time.deltaTime;
+    
+    if (attackTimer >= 16f && !laserFired)
+        FireLaser();  // Segundo 16: ¡DISPARO!
+    
+    if (attackTimer >= 25f)
+        FinishAttackSequence();  // Segundo 25: FIN
+}
+
+
+═══════════════════════════════════════════════════════════════════════════
+                    CONFIGURACIÓN DEL ANIMATOR
+═══════════════════════════════════════════════════════════════════════════
+
+   ┌──────────────────────────────────────────────────────┐
+   │                                                       │
+   │  ┌────────┐  [Attack]   ┌──────────────────┐        │
+   │  │  Idle  │────────────→│       Init       │        │
+   │  └────────┘             └──────────────────┘        │
+   │      ↑                           │                   │
+   │      │                           │ Exit Time         │
+   │      │                           ↓                   │
+   │      │                  ┌──────────────────┐        │
+   │      │                  │ Shoot_Previous   │        │
+   │      │                  └──────────────────┘        │
+   │      │                           │                   │
+   │      │                           │ Exit Time         │
+   │      │                           ↓                   │
+   │      │                  ┌──────────────────┐        │
+   │      │                  │      Shoot       │        │
+   │      │                  │  (hold 9 sec)    │        │
+   │      │                  └──────────────────┘        │
+   │      │                           │                   │
+   │      └───────────────────────────┘ Exit Time        │
+   │                     (después de 25s)                 │
+   └──────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════
+                          INSPECTOR SETUP
+═══════════════════════════════════════════════════════════════════════════
+
+GodzillaController
+├─ Audio Configuration
+│  └─ Godzilla Rayo Disparo Audio: [GodzillaRayoDisparo AudioClipSO] ⚠️
+│
+├─ Timing Configuration
+│  ├─ Shoot Start Time: 16
+│  └─ Total Audio Duration: 25
+│
+├─ Referencias
+│  ├─ Animator: [Godzilla Animator]
+│  ├─ Laser Beam: [LineRenderer]
+│  └─ Laser Origin: [Transform en boca]
+│
+└─ Nombres de Animaciones
+   ├─ Attack Trigger: "Attack"
+   └─ Shoot Animation State: "Shoot"
+```

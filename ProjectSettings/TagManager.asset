@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DestroyLimit
   - PoolLimit
+  - DefeatLimit
   - Pin
   - CameraTrigger
   layers:
