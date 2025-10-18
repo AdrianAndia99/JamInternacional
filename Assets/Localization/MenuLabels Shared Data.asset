@@ -39,6 +39,10 @@ MonoBehaviour:
     m_Key: menuTest.Spanish
     m_Metadata:
       m_Items: []
+  - m_Id: 184112956981248
+    m_Key: menuTest.Back
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

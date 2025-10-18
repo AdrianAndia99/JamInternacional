@@ -9,28 +9,38 @@ public class GodzillaGameManager : MonoBehaviour
     [Tooltip("Panel que se muestra al ganar")]
     [SerializeField] private GameObject victoryPanel;
     
+    [Tooltip("Panel que se muestra al perder")]
+    [SerializeField] private GameObject defeatPanel;
+    
     [Tooltip("Texto del panel de victoria")]
     [SerializeField] private TextMeshProUGUI victoryText;
+    
+    [Tooltip("Texto del panel de derrota")]
+    [SerializeField] private TextMeshProUGUI defeatText;
 
     [Header("Audio")]
     [Tooltip("AudioClipSO del rugido de victoria")]
     [SerializeField] private AudioClipSO victoryRoarAudio;
 
     [Header("Referencias")]
-    [Tooltip("Referencia al controlador de Godzilla")]
+    [Tooltip("Referencia al controlador de Godzilla (opcional)")]
     [SerializeField] private GodzillaController godzillaController;
 
     // Estado del juego
     private List<GodzillaEnemy> enemies = new List<GodzillaEnemy>();
     private bool gameEnded = false;
-    private bool enemyDestroyedDuringAttack = false;
 
     private void Start()
     {
-        // Ocultar panel de victoria al inicio
+        // Ocultar paneles al inicio
         if (victoryPanel != null)
         {
             victoryPanel.SetActive(false);
+        }
+        
+        if (defeatPanel != null)
+        {
+            defeatPanel.SetActive(false);
         }
 
         // Buscar el GodzillaController si no está asignado
@@ -62,14 +72,41 @@ public class GodzillaGameManager : MonoBehaviour
     /// </summary>
     public void OnEnemyDestroyed(GodzillaEnemy enemy)
     {
-        Debug.Log($"Enemigo {enemy.gameObject.name} fue destruido!");
-        
-        // Marcar que un enemigo fue destruido durante el ataque
-        if (godzillaController != null && godzillaController.IsAttacking)
-        {
-            enemyDestroyedDuringAttack = true;
-            Debug.Log("¡Enemigo destruido durante el ataque!");
-        }
+        Debug.Log($"✅ Enemigo {enemy.gameObject.name} fue destruido!");
+    }
+
+    /// <summary>
+    /// Activa la secuencia de victoria
+    /// </summary>
+    public void TriggerVictory()
+    {
+        if (gameEnded) return;
+
+        gameEnded = true;
+        Debug.Log("🎉 ¡VICTORIA! Enemigo eliminado.");
+
+        // Reproducir audio
+        PlayVictoryRoar();
+
+        // Mostrar panel de victoria después del audio
+        Invoke(nameof(ShowVictoryPanel), 1f);
+    }
+
+    /// <summary>
+    /// Activa la secuencia de derrota
+    /// </summary>
+    public void TriggerDefeat()
+    {
+        if (gameEnded) return;
+
+        gameEnded = true;
+        Debug.Log("💀 ¡DERROTA! No lograste eliminar al enemigo.");
+
+        // Reproducir el mismo audio que victoria
+        PlayVictoryRoar();
+
+        // Mostrar panel de derrota después del audio
+        Invoke(nameof(ShowDefeatPanel), 1f);
     }
 
     /// <summary>
@@ -77,50 +114,8 @@ public class GodzillaGameManager : MonoBehaviour
     /// </summary>
     public void OnAttackSequenceComplete()
     {
-        if (gameEnded) return;
-
-        Debug.Log($"Secuencia de ataque completada. Enemigo destruido: {enemyDestroyedDuringAttack}");
-
-        // Si se destruyó un enemigo durante el ataque
-        if (enemyDestroyedDuringAttack)
-        {
-            // Verificar si todos los enemigos están destruidos
-            bool allEnemiesDestroyed = true;
-            foreach (GodzillaEnemy enemy in enemies)
-            {
-                if (enemy != null && !enemy.IsDestroyed)
-                {
-                    allEnemiesDestroyed = false;
-                    break;
-                }
-            }
-
-            if (allEnemiesDestroyed)
-            {
-                // ¡VICTORIA!
-                TriggerVictory();
-            }
-            
-            // Resetear flag
-            enemyDestroyedDuringAttack = false;
-        }
-    }
-
-    /// <summary>
-    /// Activa la secuencia de victoria
-    /// </summary>
-    private void TriggerVictory()
-    {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        Debug.Log("¡VICTORIA! Todos los enemigos destruidos.");
-
-        // Reproducir rugido de victoria
-        PlayVictoryRoar();
-
-        // Mostrar panel de victoria después del rugido
-        Invoke(nameof(ShowVictoryPanel), 1f);
+        // Este método ya no se usa con el nuevo sistema
+        Debug.Log("Método legacy - ya no se usa");
     }
 
     /// <summary>
@@ -157,6 +152,26 @@ public class GodzillaGameManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No se asignó el panel de victoria.");
+        }
+    }
+
+    /// <summary>
+    /// Muestra el panel de derrota
+    /// </summary>
+    private void ShowDefeatPanel()
+    {
+        if (defeatPanel != null)
+        {
+            defeatPanel.SetActive(true);
+            
+            if (defeatText != null)
+            {
+                defeatText.text = "¡DERROTA!\n¡Fallaste el disparo!";
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó el panel de derrota.");
         }
     }
 

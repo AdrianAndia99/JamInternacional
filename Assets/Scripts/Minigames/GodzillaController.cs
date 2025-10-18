@@ -33,21 +33,21 @@ public class GodzillaController : MonoBehaviour
     [SerializeField] private AudioClipSO godzillaRayoDisparoAudio;
 
     [Header("Timing Configuration")]
-    [Tooltip("Tiempo en el que termina la transición y empieza el Shoot (segundo 16)")]
-    [SerializeField] private float shootStartTime = 16f;
-    
-    [Tooltip("Duración total del audio (25 segundos)")]
-    [SerializeField] private float totalAudioDuration = 25f;
+    [Tooltip("Tiempo antes de disparar automáticamente si no se presiona SPACE")]
+    [SerializeField] private float autoShootTime = 16f;
 
     [Header("Configuración del Láser")]
     [Tooltip("Distancia máxima del rayo")]
-    [SerializeField] private float laserMaxDistance = 100f;
+    [SerializeField] private float laserMaxDistance = 1000f;
     
     [Tooltip("Grosor del rayo al inicio")]
     [SerializeField] private float laserStartWidth = 0.5f;
     
     [Tooltip("Grosor del rayo al final")]
     [SerializeField] private float laserEndWidth = 0.3f;
+    
+    [Tooltip("Layer de los enemigos (crea un layer 'GodzillaEnemy' y asígnalo aquí)")]
+    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Nombres de Animaciones")]
     [Tooltip("Nombre del trigger para iniciar la secuencia")]
@@ -67,14 +67,14 @@ public class GodzillaController : MonoBehaviour
 
     // Estado del juego
     private bool isRotating = true;
-    private bool isAttacking = false;
+    private bool playerLockedDirection = false; // Si el jugador presionó SPACE
     private float currentRotation = 0f;
     private int rotationDirection = 1; // 1 = derecha, -1 = izquierda
     private Vector3 lockedDirection;
-    private float attackTimer = 0f;
+    private float gameTimer = 0f; // Temporizador desde el inicio del juego
     private bool laserFired = false;
 
-    public bool IsAttacking => isAttacking;
+    public bool IsRotating => isRotating;
 
     private void Start()
     {
@@ -90,41 +90,109 @@ public class GodzillaController : MonoBehaviour
             Debug.LogWarning("No se asignó laserOrigin. Usando la posición del objeto.");
             laserOrigin = transform;
         }
-
+        laserChargeEffect.Play();
         // Buscar el GameManager si no está asignado
         if (gameManager == null)
         {
             gameManager = FindFirstObjectByType<GodzillaGameManager>();
         }
 
-        // Verificar que el SoundsController esté disponible
-        if (SoundsController.Instance == null)
+        // Iniciar la animación de ataque desde el principio
+        if (animator != null)
         {
-            Debug.LogError("¡IMPORTANTE! No se encontró SoundsController en la escena.");
+            animator.SetTrigger(attackTrigger);
+            Debug.Log("🎬 Animación iniciada al comenzar la escena");
         }
-        else
+
+        // Reproducir el audio desde el inicio
+        if (godzillaRayoDisparoAudio != null)
         {
-            Debug.Log($"SoundsController encontrado. Listo para reproducir audio.");
+            godzillaRayoDisparoAudio.PlayOneShoot();
+            Debug.Log("🔊 Audio reproducido al inicio");
         }
     }
 
     private void Update()
     {
+        // Incrementar el temporizador del juego
+        gameTimer += Time.deltaTime;
+
+        // Rotar mientras no se haya disparado
         if (isRotating)
         {
             RotateModel();
+            
+            // Debug: Presiona Q para ver si apuntas al enemigo
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                CheckIfAimingAtEnemy();
+            }
+            
+            // Si el jugador presiona SPACE, congelar la dirección
+            if (Input.GetKeyDown(KeyCode.Space) && !playerLockedDirection)
+            {
+                LockDirection();
+            }
         }
 
-        // Detectar input para iniciar ataque
-        if (Input.GetKeyDown(KeyCode.Space) && !isAttacking && isRotating)
+        // Disparo automático cuando se acaba el tiempo
+        if (!laserFired && gameTimer >= autoShootTime)
         {
-            StartAttackSequence();
+            // Si el jugador no congeló la dirección, congelar ahora
+            if (!playerLockedDirection)
+            {
+                LockDirection();
+                Debug.Log("⏰ Tiempo agotado. Disparando automáticamente en la última dirección.");
+            }
+            
+            FireLaser();
         }
+    }
 
-        // Manejar la secuencia de ataque sincronizada con el audio
-        if (isAttacking)
+    /// <summary>
+    /// Congela la dirección actual de Godzilla
+    /// </summary>
+    private void LockDirection()
+    {
+        isRotating = false;
+        playerLockedDirection = true;
+        
+        // Calcular y guardar la dirección
+        float angleInRadians = currentRotation * Mathf.Deg2Rad;
+        lockedDirection = new Vector3(Mathf.Sin(angleInRadians), 0f, Mathf.Cos(angleInRadians));
+        
+        Debug.Log($"🔒 Dirección congelada en: {currentRotation:F1}° - Dirección: {lockedDirection}");
+        Debug.Log($"⏱️ Tiempo restante para disparo: {(autoShootTime - gameTimer):F1}s");
+    }
+
+    /// <summary>
+    /// Verifica si estamos apuntando a un enemigo (ayuda visual en consola)
+    /// Presiona Q para verificar si apuntas al enemigo
+    /// </summary>
+    private void CheckIfAimingAtEnemy()
+    {
+        float angleInRadians = currentRotation * Mathf.Deg2Rad;
+        Vector3 currentDirection = new Vector3(Mathf.Sin(angleInRadians), 0f, Mathf.Cos(angleInRadians));
+        
+        Debug.Log($"🎯 Verificando dirección actual:");
+        Debug.Log($"   Ángulo: {currentRotation:F1}°");
+        Debug.Log($"   Dirección: {currentDirection}");
+        
+        // Raycast para ver si apuntamos a un enemigo
+        RaycastHit[] hits = Physics.RaycastAll(laserOrigin.position, currentDirection, laserMaxDistance, enemyLayer);
+        
+        if (hits.Length > 0)
         {
-            HandleAttackSequence();
+            Debug.Log($"   ✅ ¡APUNTANDO A {hits.Length} ENEMIGO(S)! Presiona SPACE ahora para atacar");
+            foreach (var hit in hits)
+            {
+                Debug.Log($"      - {hit.collider.name} (distancia: {hit.distance:F1})");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"   ❌ NO apuntas a ningún enemigo en este ángulo");
+            Debug.LogWarning($"      Continúa rotando y vuelve a presionar Q");
         }
     }
 
@@ -153,86 +221,40 @@ public class GodzillaController : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicia la secuencia de ataque sincronizada con el audio de 25 segundos
-    /// </summary>
-    private void StartAttackSequence()
-    {
-        isRotating = false;
-        isAttacking = true;
-        attackTimer = 0f;
-        laserFired = false;
-        
-        // Guardar la dirección actual
-        lockedDirection = transform.forward;
-
-        Debug.Log($"Ataque iniciado en dirección: {lockedDirection}");
-
-        // Reproducir el audio de 25 segundos
-        if (godzillaRayoDisparoAudio != null)
-        {
-            godzillaRayoDisparoAudio.PlayOneShoot();
-            Debug.Log("Audio 'GodzillaRayoDisparo' reproducido (25 segundos)");
-        }
-
-        // Activar animación de ataque
-        if (animator != null)
-        {
-            animator.SetTrigger(attackTrigger);
-        }
-
-        // Efecto de carga (opcional)
-        if (laserChargeEffect != null)
-        {
-            laserChargeEffect.Play();
-        }
-    }
-
-    /// <summary>
-    /// Maneja la secuencia de ataque basada en el tiempo del audio
-    /// 0-16s: Transiciones de animación (Idle → Init → Shoot_Previous)
-    /// 16-25s: Estado Shoot con láser activo
-    /// 25s: Volver a Idle
-    /// </summary>
-    private void HandleAttackSequence()
-    {
-        attackTimer += Time.deltaTime;
-
-        // Del segundo 16 al 25: Disparar y mantener el láser
-        if (attackTimer >= shootStartTime && !laserFired)
-        {
-            laserFired = true;
-            FireLaser();
-        }
-
-        // Al terminar el audio (25 segundos): Finalizar secuencia
-        if (attackTimer >= totalAudioDuration)
-        {
-            FinishAttackSequence();
-        }
-    }
-
-    /// <summary>
-    /// Dispara el rayo láser
+    /// Dispara el rayo láser (solo una vez)
     /// </summary>
     private void FireLaser()
     {
-        Debug.Log("¡Disparando rayo láser!");
+        laserFired = true;
+        
+        Debug.Log("⚡ ¡Disparando rayo láser!");
 
         // Calcular punto final del rayo
         Vector3 startPoint = laserOrigin.position;
         Vector3 endPoint = startPoint + lockedDirection * laserMaxDistance;
 
-        // Raycast para detectar colisiones (detecta TODOS los objetos en el camino)
-        RaycastHit[] hits = Physics.RaycastAll(startPoint, lockedDirection, laserMaxDistance);
+        Debug.Log($"🎯 Origen del rayo: {startPoint}");
+        Debug.Log($"🎯 Dirección del rayo: {lockedDirection}");
+        Debug.Log($"🎯 Distancia máxima: {laserMaxDistance}");
+
+        // Raycast para detectar colisiones SOLO en el layer de enemigos
+        RaycastHit[] hits = Physics.RaycastAll(startPoint, lockedDirection, laserMaxDistance, enemyLayer);
+        
+        Debug.Log($"🔍 Raycast detectó {hits.Length} enemigo(s)");
+
+        bool hitEnemy = false;
         
         foreach (RaycastHit hit in hits)
         {
+            Debug.Log($"🎯 Raycast impactó: {hit.collider.gameObject.name} - Distancia: {hit.distance:F1}m");
+
             // Verificar si es un enemigo
             GodzillaEnemy enemy = hit.collider.GetComponent<GodzillaEnemy>();
             if (enemy != null && !enemy.IsDestroyed)
             {
-                Debug.Log($"¡Láser impactó al enemigo: {enemy.gameObject.name}!");
+                Debug.Log($"💥 ¡IMPACTO! Enemigo {enemy.gameObject.name} destruido!");
                 enemy.DestroyEnemy();
+                hitEnemy = true;
             }
 
             // Actualizar punto final si hay colisión física
@@ -247,13 +269,39 @@ public class GodzillaController : MonoBehaviour
                     laserImpactEffect.transform.rotation = Quaternion.LookRotation(hit.normal);
                     laserImpactEffect.Play();
                 }
-
-                Debug.Log($"Rayo impactó en: {hit.collider.gameObject.name}");
             }
         }
 
-        // Activar el LineRenderer
+        // Activar el LineRenderer para mostrar el láser
         StartCoroutine(AnimateLaser(startPoint, endPoint));
+        
+        // Resultado final después de un delay (esperar a que el láser se vea)
+        StartCoroutine(ShowResult(hitEnemy, 2f));
+    }
+
+    /// <summary>
+    /// Muestra el resultado del disparo (Victoria o Derrota)
+    /// </summary>
+    private IEnumerator ShowResult(bool hitEnemy, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        if (hitEnemy)
+        {
+            Debug.Log("🎉 ¡VICTORIA! Enemigo eliminado");
+            if (gameManager != null)
+            {
+                gameManager.TriggerVictory();
+            }
+        }
+        else
+        {
+            Debug.Log("💀 ¡DERROTA! Fallaste el disparo");
+            if (gameManager != null)
+            {
+                gameManager.TriggerDefeat();
+            }
+        }
     }
 
     /// <summary>
@@ -299,11 +347,6 @@ public class GodzillaController : MonoBehaviour
         // Del segundo 16 al 25 = 9 segundos totales
         // Ya usamos 0.3s en crecimiento, quedan ~8.4s para mantener
         // Usaremos 0.3s para el fade, así que mantenemos por 8.4s
-        float laserDuration = totalAudioDuration - shootStartTime; // 25 - 16 = 9 segundos
-        float maintainDuration = laserDuration - growDuration - 0.3f;
-        
-        yield return new WaitForSeconds(maintainDuration);
-
         // FASE 3: Desvanecimiento (0.3 segundos)
         float fadeDuration = 0.3f;
         elapsed = 0f;
@@ -344,32 +387,6 @@ public class GodzillaController : MonoBehaviour
         Debug.Log("Láser desactivado. Esperando fin del audio...");
     }
 
-    /// <summary>
-    /// Finaliza la secuencia de ataque y vuelve al estado normal
-    /// Se llama automáticamente cuando termina el audio (25 segundos)
-    /// </summary>
-    private void FinishAttackSequence()
-    {
-        isAttacking = false;
-        isRotating = true;
-        attackTimer = 0f;
-        laserFired = false;
-
-        // Detener el audio usando el SoundsController
-        if (SoundsController.Instance != null)
-        {
-            SoundsController.Instance.StopCurrentClip();
-            Debug.Log("Audio detenido.");
-        }
-
-        Debug.Log("Secuencia de ataque completada (audio terminado). Volviendo a rotar.");
-
-        // Notificar al GameManager que la secuencia terminó
-        if (gameManager != null)
-        {
-            gameManager.OnAttackSequenceComplete();
-        }
-    }
 
     /// <summary>
     /// Inicializa el LineRenderer del láser
@@ -409,26 +426,28 @@ public class GodzillaController : MonoBehaviour
         laserBeam.colorGradient = gradient;
     }
 
-    /// <summary>
-    /// Método público para forzar el disparo (para testing)
-    /// </summary>
-    [ContextMenu("Test Fire Laser")]
-    public void TestFireLaser()
-    {
-        if (!isAttacking)
-        {
-            StartAttackSequence();
-        }
-    }
-
     private void OnDrawGizmos()
     {
         // Visualizar la dirección del disparo en el editor
-        if (Application.isPlaying && !isRotating)
+        if (Application.isPlaying && !isRotating && laserOrigin != null)
         {
             Gizmos.color = Color.red;
-            Vector3 origin = laserOrigin != null ? laserOrigin.position : transform.position;
-            Gizmos.DrawRay(origin, lockedDirection * 10f);
+            Vector3 origin = laserOrigin.position;
+            Gizmos.DrawRay(origin, lockedDirection * laserMaxDistance);
+            Gizmos.DrawWireSphere(origin, 0.5f);
+
+            // Dibujar texto en la escena
+            UnityEngine.GUI.color = Color.yellow;
+        }
+
+        // Visualizar el rayo activo durante el disparo
+        if (Application.isPlaying && laserBeam != null && laserBeam.enabled)
+        {
+            Gizmos.color = Color.cyan;
+            if (laserOrigin != null)
+            {
+                Gizmos.DrawRay(laserOrigin.position, lockedDirection * 10f);
+            }
         }
     }
 }
