@@ -153,7 +153,7 @@ MonoBehaviour:
   timerText: {fileID: 1832631195}
   gameDuration: 15
   minAppearTime: 1
-  maxAppearTime: 2
+  maxAppearTime: 0.5
 --- !u!4 &671708273
 Transform:
   m_ObjectHideFlags: 0
