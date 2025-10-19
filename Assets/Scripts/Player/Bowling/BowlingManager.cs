@@ -44,6 +44,9 @@ public class BowlingManager : MonoBehaviour
         {
             Debug.Log("No derribó ninguno");
         }
+        
+        // Actualizar UI
+        jack.UpdateScoreUI(fallenPins);
 
         // Reiniciar pinos y bola
         yield return new WaitForSeconds(2f);

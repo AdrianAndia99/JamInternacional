@@ -9,6 +9,7 @@ TagManager:
   - DefeatLimit
   - Pin
   - CameraTrigger
+  - Cow
   layers:
   - Default
   - TransparentFX

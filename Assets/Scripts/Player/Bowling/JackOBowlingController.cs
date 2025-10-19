@@ -15,8 +15,8 @@ public class JackOBowlingController : MonoBehaviour
     [SerializeField] private float maxThrowForce = 20f;
     [SerializeField] private float stopTimeToReset = 2f; // tiempo que puede estar quieta antes de perder intento
 
-    [Header("Rotación visual del mesh")]
-    public Transform meshObject;        // el hijo visual (asígnalo en el inspector)
+    [Header("Rotaciï¿½n visual del mesh")]
+    public Transform meshObject;        // el hijo visual (asï¿½gnalo en el inspector)
     public float meshRotationMultiplier = 200f; // controla velocidad de giro visual
 
     [Header("UI")]
@@ -28,6 +28,7 @@ public class JackOBowlingController : MonoBehaviour
     [SerializeField] private Transform SpawnPumpkin;
     [SerializeField] CinemachineCamera camBall;
     [SerializeField] CinemachineCamera camStatic;
+    [SerializeField] TeleDisplayController TVDC;
 
     private Vector2 moveInput;
     private Vector2 angleInput;
@@ -106,6 +107,7 @@ public class JackOBowlingController : MonoBehaviour
             Vector3 direction = Quaternion.Euler(0, transform.eulerAngles.y, 0) * Vector3.forward;
             rb.AddForce(direction * force, ForceMode.Impulse);
 
+            TVDC.OnFirstThrow();
         }
     }
 
@@ -115,10 +117,10 @@ public class JackOBowlingController : MonoBehaviour
         {
             CheckIfStopped();
 
-            // Rotación visual del mesh según la velocidad
-            if (meshObject != null && rb.velocity.magnitude > 0.1f)
+            // Rotaciï¿½n visual del mesh segï¿½n la velocidad
+            if (meshObject != null && rb.linearVelocity.magnitude > 0.1f)
             {
-                float rotationSpeed = rb.velocity.magnitude * meshRotationMultiplier * Time.deltaTime;
+                float rotationSpeed = rb.linearVelocity.magnitude * meshRotationMultiplier * Time.deltaTime;
                 meshObject.Rotate(Vector3.right, rotationSpeed, Space.Self);
             }
 
@@ -155,7 +157,7 @@ public class JackOBowlingController : MonoBehaviour
 
     private void CheckIfStopped()
     {
-        if (rb.velocity.magnitude < 0.1f)
+        if (rb.linearVelocity.magnitude < 0.1f)
         {
             stillTimer += Time.deltaTime;
 
@@ -174,14 +176,14 @@ public class JackOBowlingController : MonoBehaviour
     {
         stillTimer = 0f;
         isThrown = false;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.rotation = SpawnPumpkin.transform.rotation;
         transform.position = SpawnPumpkin.transform.position;
         meshObject.transform.rotation = InitialRotation;
         isFrozen = false;
 
-        // Reactivar cámara principal
+        // Reactivar cï¿½mara principal
         if (camBall != null)
         {
             camBall.Priority = 1;
@@ -207,11 +209,16 @@ public class JackOBowlingController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        // Cambiar de cámara al pasar cierto trigger
+        // Cambiar de cï¿½mara al pasar cierto trigger
         if (other.CompareTag("CameraTrigger"))
         {
             if (camBall != null) camBall.Priority = 0;
             if (camStatic != null) camStatic.Priority = 1;
         }
+    }
+    public void UpdateScoreUI(int knockedPins)
+    {
+        bool strike = knockedPins >= 10;
+        TVDC?.UpdateTeleScores(knockedPins, attempts, strike);
     }
 }
