@@ -11,8 +11,6 @@ TagManager:
   - CameraTrigger
   - Cow
   - Scarecrow
-  - Candy
-  - Rotten
   layers:
   - Default
   - TransparentFX
