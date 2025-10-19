@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "OnMovePumpkin",
+                    "name": "OnMove1D",
                     "type": "Value",
                     "id": "ce4f484a-7e72-4242-9455-1a4fd826b778",
                     "expectedControlType": "Vector2",
@@ -33,7 +33,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "OnAnglePumpkin",
+                    "name": "OnAngle",
                     "type": "Value",
                     "id": "94e5a20e-31c6-453d-ba22-2ca2e730f223",
                     "expectedControlType": "Vector2",
@@ -54,6 +54,24 @@
                     "name": "Throw",
                     "type": "Button",
                     "id": "3f3d8a58-a81f-46d6-9fa5-303b77546f03",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OnZoom",
+                    "type": "Button",
+                    "id": "6b9ecac2-0ba5-4d8a-920a-b00bb3708ab7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OnFire",
+                    "type": "Button",
+                    "id": "2f55f15c-ea50-4fb5-8149-f1832b333244",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -134,7 +152,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnMovePumpkin",
+                    "action": "OnMove1D",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -145,7 +163,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnMovePumpkin",
+                    "action": "OnMove1D",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -156,7 +174,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnMovePumpkin",
+                    "action": "OnMove1D",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -167,7 +185,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnAnglePumpkin",
+                    "action": "OnAngle",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -178,7 +196,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnAnglePumpkin",
+                    "action": "OnAngle",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -189,7 +207,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OnAnglePumpkin",
+                    "action": "OnAngle",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -212,6 +230,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5758571-557e-4e25-8b07-18bddbafb233",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OnZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "331aad23-1842-4825-ac2e-e5f803a4d1f3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OnFire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
