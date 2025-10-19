@@ -8,10 +8,10 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private int startTimeInSeconds = 10;
 
     [Header("Events")]
-    [SerializeField] private UnityEvent OnStartTimer;
-    [SerializeField] private UnityEvent OnStopTimer;
-    [SerializeField] private UnityEvent<int> OnSecondPassed;
-    [SerializeField] private UnityEvent OnTimeFinished;
+    [SerializeField] public UnityEvent OnStartTimer;
+    [SerializeField] public UnityEvent OnStopTimer;
+    [SerializeField] public UnityEvent<int> OnSecondPassed;
+    [SerializeField] public UnityEvent OnTimeFinished;
 
 
     private float elapsedTime = 0f;
