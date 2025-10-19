@@ -122,7 +122,7 @@ public class SadakoBlowGame : MonoBehaviour
         {
             hasBlownThisCycle = true;
 
-            soplido.PlayOneShoot();
+            soplido.PlayOneShoot();ice
 
             if (eyeHappy)
             {
