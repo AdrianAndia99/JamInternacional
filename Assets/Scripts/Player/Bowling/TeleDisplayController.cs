@@ -39,7 +39,7 @@ public class TeleDisplayController : MonoBehaviour
     {
         if (teleKeyboardText != null)
             teleKeyboardText.text =
-                "Controles Teclado:\n? ? Mover calabaza\n? Fijar posición\n? Lanzar";
+                "Controles Teclado:\nteclas Iz, De Mover calabaza\n Tecla Abajo Fijar posición\nTecla arriba Lanzar";
 
         if (teleMouseText != null)
             teleMouseText.text =

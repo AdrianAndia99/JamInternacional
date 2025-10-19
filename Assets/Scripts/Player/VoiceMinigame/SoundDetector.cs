@@ -72,6 +72,18 @@ public class SoundDetector : MonoBehaviour
             lastState = currentState;
         }
     }
+    public string GetCurrentSoundState()
+    {
+        float volume = GetAverageVolume() / sensitivity;
+        volume = Mathf.Clamp01(volume);
+
+        if (volume < weakThreshold)
+            return "silencio";
+        else if (volume < strongThreshold)
+            return "sonido débil";
+        else
+            return "sonido fuerte";
+    }
 
     float GetAverageVolume()
     {
