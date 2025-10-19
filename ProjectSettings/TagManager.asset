@@ -10,8 +10,7 @@ TagManager:
   - Pin
   - CameraTrigger
   - Cow
-  - Candy
-  - Rotten
+  - Scarecrow
   layers:
   - Default
   - TransparentFX
