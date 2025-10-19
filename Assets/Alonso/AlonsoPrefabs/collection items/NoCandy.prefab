@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6061062883299066371}
   m_Layer: 6
   m_Name: NoCandy
-  m_TagString: Untagged
+  m_TagString: Rotten
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
