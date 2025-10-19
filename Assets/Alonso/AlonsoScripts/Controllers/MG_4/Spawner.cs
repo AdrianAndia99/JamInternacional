@@ -26,3 +26,4 @@ public class Spawner : MonoBehaviour
         Instantiate(objectsToSpawn[index], spawnPos, Quaternion.identity);
     }
 }
+

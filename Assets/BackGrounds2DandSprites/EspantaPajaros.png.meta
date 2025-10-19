@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f37a3fe59e464d540b0d425cdbb684a3
+guid: 283987d416c8f1e40b2c918ce16b3f19
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,7 +94,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
+    buildTarget: WindowsStoreApps
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SpritesObjetos_0
+      name: EspantaPajaros_0
       rect:
         serializedVersion: 2
-        x: 35
-        y: 67
-        width: 215
-        height: 265
+        x: 4
+        y: 45
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,20 +125,86 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4804f53722731a34d84c39940af4b321
-      internalID: -1033196585
+      spriteID: ceb3ccf2f69f6004b9f06928109d09ef
+      internalID: 1137491837
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesObjetos_1
+      name: EspantaPajaros_1
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 45
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e06d8215fd6b1441a53f0bca9eea4cd
+      internalID: -2094929598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EspantaPajaros_2
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 45
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb66e7c55661a1540b890804d1c6e77a
+      internalID: 208782859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EspantaPajaros_3
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 45
+        width: 46
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f16a721cd28693b4299e1cb242c0c72c
+      internalID: 1358261760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EspantaPajaros_4
       rect:
         serializedVersion: 2
         x: 262
-        y: 267
-        width: 115
-        height: 88
+        y: 45
+        width: 22
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,20 +213,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 347a336636028044b86c4a27b1b384d4
-      internalID: -2080048472
+      spriteID: 59f5737574bd3f94cb4f3b77f08b19d2
+      internalID: -2023582603
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesObjetos_2
+      name: EspantaPajaros_5
       rect:
         serializedVersion: 2
-        x: 427
-        y: 250
-        width: 72
-        height: 85
+        x: 289
+        y: 45
+        width: 36
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -169,20 +235,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28d18b26f1056934d8fad0c30a5dd9e7
-      internalID: 860599036
+      spriteID: 5cd45ec6fe742454b9e6e28489324ef7
+      internalID: -1696063823
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesObjetos_3
+      name: EspantaPajaros_6
       rect:
         serializedVersion: 2
-        x: 278
-        y: 52
-        width: 83
-        height: 81
+        x: 331
+        y: 45
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,20 +257,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9d77ee7b2f968c0419b671afdf3bd414
-      internalID: -1949069649
+      spriteID: 519ab8db01ff4864ba5648ddb7c855a7
+      internalID: -411981803
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpritesObjetos_4
+      name: EspantaPajaros_7
       rect:
         serializedVersion: 2
-        x: 313
-        y: 132
-        width: 109
-        height: 122
+        x: 400
+        y: 45
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -213,30 +279,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5c46f94ee7938ba47ac27dd9c1ab5075
-      internalID: -1476379176
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpritesObjetos_5
-      rect:
-        serializedVersion: 2
-        x: 423
-        y: 66
-        width: 150
-        height: 150
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 81d2e6ba6faf5f244a912a56f7ab74e0
-      internalID: -1105760811
+      spriteID: 2d16baa9c346db845935ce747156c93e
+      internalID: 1958627096
       vertices: []
       indices: 
       edges: []
@@ -245,7 +289,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2a6e3c25e72bbbb4aba558ba570286c1
+    spriteID: 6fa1378571fe09b469b9fa1550244c44
     internalID: 0
     vertices: []
     indices: 
@@ -255,12 +299,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SpritesObjetos_0: -1033196585
-      SpritesObjetos_1: -2080048472
-      SpritesObjetos_2: 860599036
-      SpritesObjetos_3: -1949069649
-      SpritesObjetos_4: -1476379176
-      SpritesObjetos_5: -1105760811
+      EspantaPajaros_0: 1137491837
+      EspantaPajaros_1: -2094929598
+      EspantaPajaros_2: 208782859
+      EspantaPajaros_3: 1358261760
+      EspantaPajaros_4: -2023582603
+      EspantaPajaros_5: -1696063823
+      EspantaPajaros_6: -411981803
+      EspantaPajaros_7: 1958627096
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
