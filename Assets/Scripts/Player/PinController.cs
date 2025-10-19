@@ -35,7 +35,7 @@ public class PinController : MonoBehaviour
     {
         transform.position = initialPosition;
         transform.rotation = initialRotation;
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         if (materialInstance != null)
             materialInstance.SetColor("_OutlineColor", Color.green);
