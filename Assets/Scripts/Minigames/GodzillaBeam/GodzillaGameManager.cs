@@ -21,6 +21,9 @@ public class GodzillaGameManager : MonoBehaviour
     [Header("Audio")]
     [Tooltip("AudioClipSO del rugido de victoria")]
     [SerializeField] private AudioClipSO victoryRoarAudio;
+    
+    [Tooltip("AudioClipSO de derrota")]
+    [SerializeField] private AudioClipSO defeatAudio;
 
     [Header("Referencias")]
     [Tooltip("Referencia al controlador de Godzilla (opcional)")]
@@ -102,8 +105,8 @@ public class GodzillaGameManager : MonoBehaviour
         gameEnded = true;
         Debug.Log("💀 ¡DERROTA! No lograste eliminar al enemigo.");
 
-        // Reproducir el mismo audio que victoria
-        PlayVictoryRoar();
+        // Reproducir audio de derrota
+        PlayDefeatAudio();
 
         // Mostrar panel de derrota después del audio
         Invoke(nameof(ShowDefeatPanel), 1f);
@@ -132,6 +135,22 @@ public class GodzillaGameManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No se asignó el AudioClipSO de rugido de victoria.");
+        }
+    }
+
+    /// <summary>
+    /// Reproduce el audio de derrota
+    /// </summary>
+    private void PlayDefeatAudio()
+    {
+        if (defeatAudio != null)
+        {
+            defeatAudio.PlayOneShoot();
+            Debug.Log("Audio de derrota reproducido!");
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó el AudioClipSO de derrota.");
         }
     }
 

@@ -835,6 +835,7 @@ MonoBehaviour:
   victoryText: {fileID: 1080754522}
   defeatText: {fileID: 2051552894}
   victoryRoarAudio: {fileID: 11400000, guid: 6009358a85836854cb1a551bd5c87a62, type: 2}
+  defeatAudio: {fileID: 11400000, guid: 4a2eff75401cd2746b95b73154f0ef35, type: 2}
   godzillaController: {fileID: 1185811983}
 --- !u!1 &1080754520
 GameObject:

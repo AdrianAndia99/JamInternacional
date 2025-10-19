@@ -41,6 +41,9 @@ public class DinoRunner : MonoBehaviour
     
     [Tooltip("Tiempo máximo entre inputs (si tardas más, es error)")]
     [SerializeField] private float maxInputDelay = 1.5f;
+    
+    [Tooltip("Cooldown entre inputs para evitar spam (en segundos)")]
+    [SerializeField] private float inputCooldown = 0.2f;
 
     [Header("Configuración de Obstáculos")]
     [Tooltip("Prefab del obstáculo")]
@@ -85,12 +88,12 @@ public class DinoRunner : MonoBehaviour
     [Tooltip("Color neutral")]
     [SerializeField] private Color neutralKeyColor = Color.white;
 
-    [Header("UI - Paneles de Resultado")]
+    /*[Header("UI - Paneles de Resultado")]
     [Tooltip("Panel de victoria (escapaste del dinosaurio)")]
     [SerializeField] private GameObject victoryPanel;
     
     [Tooltip("Panel de derrota (el dinosaurio te atrapó)")]
-    [SerializeField] private GameObject defeatPanel;
+    [SerializeField] private GameObject defeatPanel;*/ //Comentado para evitar errores de referencia - paneles vit/der
 
     [Header("Audio")]
     [Tooltip("Audio de paso correcto")]
@@ -99,11 +102,11 @@ public class DinoRunner : MonoBehaviour
     [Tooltip("Audio de error")]
     [SerializeField] private AudioClipSO wrongStepAudio;
     
-    [Tooltip("Audio de victoria")]
+   /* [Tooltip("Audio de victoria")]
     [SerializeField] private AudioClipSO victoryAudio;
     
     [Tooltip("Audio de derrota")]
-    [SerializeField] private AudioClipSO defeatAudio;
+    [SerializeField] private AudioClipSO defeatAudio;*/
 
     [Header("Nombres de Animaciones")]
     [SerializeField] private string playerRunAnimation = "Run";
@@ -116,6 +119,7 @@ public class DinoRunner : MonoBehaviour
     private bool gameActive = false;
     private bool gameEnded = false;
     private float lastInputTime;
+    private float lastSuccessfulInputTime; // Tiempo del último input procesado (para cooldown)
     private float obstacleTimer;
     private int correctInputsCount = 0;
     private int wrongInputsCount = 0;
@@ -143,8 +147,8 @@ public class DinoRunner : MonoBehaviour
         }
 
         // Ocultar paneles
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (defeatPanel != null) defeatPanel.SetActive(false);
+      //  if (victoryPanel != null) victoryPanel.SetActive(false);
+      //  if (defeatPanel != null) defeatPanel.SetActive(false);
 
         // Iniciar el juego
         StartGame();
@@ -194,6 +198,7 @@ public class DinoRunner : MonoBehaviour
         currentDistance = initialDistance;
         expectingA = true;
         lastInputTime = Time.time;
+        lastSuccessfulInputTime = Time.time - inputCooldown; // Inicializar para que el primer input sea inmediato
         obstacleTimer = 0f;
         correctInputsCount = 0;
         wrongInputsCount = 0;
@@ -223,6 +228,13 @@ public class DinoRunner : MonoBehaviour
 
         if (pressedA || pressedD)
         {
+            // Verificar cooldown para evitar spam
+            if (Time.time - lastSuccessfulInputTime < inputCooldown)
+            {
+                Debug.Log("⏱️ Cooldown activo. Espera un momento antes de presionar otra tecla.");
+                return; // Ignorar el input si está en cooldown
+            }
+            
             bool isCorrect = (expectingA && pressedA) || (!expectingA && pressedD);
 
             if (isCorrect)
@@ -234,6 +246,9 @@ public class DinoRunner : MonoBehaviour
                 ProcessWrongInput();
             }
 
+            // Actualizar tiempos
+            lastSuccessfulInputTime = Time.time; // Registrar el tiempo de este input
+            
             // Alternar la tecla esperada
             expectingA = !expectingA;
             lastInputTime = Time.time;
@@ -385,7 +400,7 @@ public class DinoRunner : MonoBehaviour
         // Mostrar distancia
         if (distanceText != null)
         {
-            distanceText.text = $"Distancia: {currentDistance:F1}m\nCorrectos: {correctInputsCount} | Errores: {wrongInputsCount}";
+            distanceText.text = $"Distancia: {currentDistance:F1}";
         }
 
         // Actualizar indicadores de teclas
@@ -494,16 +509,16 @@ public class DinoRunner : MonoBehaviour
         Debug.Log("🎉 ¡VICTORIA! ¡Escapaste del dinosaurio!");
 
         // Audio
-        if (victoryAudio != null)
+      /*  if (victoryAudio != null)
         {
             victoryAudio.PlayOneShoot();
-        }
+        }*/  //reproducir audio de victoria
 
         // Panel
-        if (victoryPanel != null)
+      /*  if (victoryPanel != null)
         {
             victoryPanel.SetActive(true);
-        }
+        }*/
 
         // Detener animaciones
         if (playerAnimator != null)
@@ -525,49 +540,21 @@ public class DinoRunner : MonoBehaviour
         Debug.Log("💀 ¡DERROTA! ¡El dinosaurio te atrapó!");
 
         // Audio
-        if (defeatAudio != null)
+       /* if (defeatAudio != null)
         {
             defeatAudio.PlayOneShoot();
-        }
+        }*/  //reproducir audio de derrota
 
         // Panel
-        if (defeatPanel != null)
+       /* if (defeatPanel != null)
         {
             defeatPanel.SetActive(true);
-        }
+        }*/
 
         // Detener animaciones
         if (playerAnimator != null)
         {
             playerAnimator.Play(playerIdleAnimation);
         }
-    }
-
-    /// <summary>
-    /// Reinicia el juego
-    /// </summary>
-    public void RestartGame()
-    {
-        // Ocultar paneles
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (defeatPanel != null) defeatPanel.SetActive(false);
-
-        // Limpiar obstáculos
-        ObstacleMovement[] obstacles = FindObjectsByType<ObstacleMovement>(FindObjectsSortMode.None);
-        foreach (var obs in obstacles)
-        {
-            Destroy(obs.gameObject);
-        }
-
-        // Reiniciar
-        StartGame();
-    }
-
-    /// <summary>
-    /// Vuelve al menú
-    /// </summary>
-    public void ReturnToMenu()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MenuTest");
     }
 }
