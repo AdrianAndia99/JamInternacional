@@ -8,6 +8,8 @@ TagManager:
   - PoolLimit
   - DefeatLimit
   - Pin
+  - CameraTrigger
+  - Cow
   layers:
   - Default
   - TransparentFX
