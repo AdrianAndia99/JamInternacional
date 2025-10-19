@@ -2,41 +2,52 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
+using DG.Tweening;
+
 public class SadakoBlowGame : MonoBehaviour
 {
     [Header("Micrófono")]
-    public string micName;
+    [SerializeField] private string micName;
     private AudioClip micClip;
 
     [Header("UI")]
-    public Slider volumeSlider; // Asigna el slider desde el inspector
+    [SerializeField] private Slider volumeSlider; // Asigna el slider desde el inspector
 
     [Header("Sensibilidad")]
     [Range(0.01f, 1f)]
-    public float sensitivity = 0.1f; // Qué tan sensible es el medidor
+    [SerializeField] private float sensitivity = 0.1f; // Qué tan sensible es el medidor
 
     [Header("Visual del volumen")]
-    public Color quietColor = Color.green;
-    public Color loudColor = Color.red;
-    public Image fillImage; // Asigna la parte del slider que se llena
+    [SerializeField] private Color quietColor = Color.green;
+    [SerializeField] private Color loudColor = Color.red;
+    [SerializeField] private Image fillImage; // Asigna la parte del slider que se llena
 
     // Umbrales para definir la intensidad del sonido
     [Header("Umbrales de detección")]
-    public float weakThreshold = 0.1f;   // sonido débil
-    public float strongThreshold = 0.3f; // sonido fuerte
+    [SerializeField] private float weakThreshold;   // sonido débil
+    [SerializeField] private float strongThreshold; // sonido fuerte
 
     private string lastState = ""; // Para evitar spam en consola
 
     [Header("Sadako - Referencias")]
-    public Transform hair; // Cubo del cabello
-    public Transform eye;  // Cubo del ojo
-    public Material eyeMaterial; // Material del ojo (usa _BaseColor)
-    public TextMeshProUGUI infoText; // Texto UI en pantalla
+    [SerializeField] private List<Transform> hairStrands = new List<Transform>(); // varios mechones
+    [SerializeField] private Transform eye;  // Cubo del ojo
+    [SerializeField] private Material eyeMaterial; // Material del ojo (usa _BaseColor)
+    [SerializeField] private TextMeshProUGUI infoText; // Texto UI en pantalla
+    [SerializeField] private Color BadEye;
+    [SerializeField] private Color GoodEye;
 
     [Header("Sadako - Lógica de juego")]
-    public float eyeChangeInterval = 3f; // Cada cuánto cambia el estado del ojo
+    [SerializeField] private float minEyeChangeInterval;
+    [SerializeField] private float maxEyeChangeInterval;
+    private float currentInterval;
     private bool eyeHappy = false;
     private float eyeTimer = 0f;
+
+    private int nextHairIndex = 0; // controla qué mechón se mueve
+    public bool hasBlownThisCycle = false; // evita múltiples mechones por soplido
+
 
     void Start()
     {
@@ -54,6 +65,7 @@ public class SadakoBlowGame : MonoBehaviour
 
         // Estado inicial del ojo
         SetEyeState(false);
+        SetRandomInterval();
         if (infoText)
             infoText.text = "Espera... sopla cuando el ojo esté FELIZ ";
     }
@@ -90,27 +102,38 @@ public class SadakoBlowGame : MonoBehaviour
 
         //Cambiar estado del ojo periódicamente
         eyeTimer += Time.deltaTime;
-        if (eyeTimer >= eyeChangeInterval)
+        if (eyeTimer >= currentInterval)
         {
             eyeTimer = 0;
             SetEyeState(!eyeHappy);
+            SetRandomInterval();
+            // Reinicia posibilidad de soplar cuando cambia el estado del ojo
+            hasBlownThisCycle = false;
         }
 
         //Detección del soplido fuerte
-        if (volume > strongThreshold)
+        if (volume > strongThreshold && !hasBlownThisCycle)
         {
+            hasBlownThisCycle = true;
+
             if (eyeHappy)
             {
                 if (infoText)
                     infoText.text = "¡Buen soplido! El cabello se aparta...";
-                MoveHair();
+                BlowNextHair();
             }
             else
             {
                 if (infoText)
                     infoText.text = "¡Soplaste en mal momento! Has perdido.";
-                ResetHair();
+                ResetAllHair();
                 SetEyeState(false);
+            }
+
+            //Permitir volver a soplar cuando el sonido baja
+            if (volume < weakThreshold)
+            {
+                hasBlownThisCycle = false;
             }
         }
     }
@@ -131,27 +154,66 @@ public class SadakoBlowGame : MonoBehaviour
         eyeHappy = happy;
         if (eyeMaterial)
         {
-            eyeMaterial.SetColor("_BaseColor", happy ? Color.green : Color.red);
+            eyeMaterial.SetColor("_BaseColor", happy ? GoodEye : BadEye);
         }
         else if (eye)
         {
             var renderer = eye.GetComponent<Renderer>();
             if (renderer != null && renderer.material.HasProperty("_BaseColor"))
-                renderer.material.SetColor("_BaseColor", happy ? Color.green : Color.red);
+                renderer.material.SetColor("_BaseColor", happy ? GoodEye : BadEye);
         }
     }
 
-    //Mover el cabello hacia un lado
-    void MoveHair()
+    void SetRandomInterval()
     {
-        if (hair)
-            hair.localPosition += new Vector3(0.05f, 0, 0);
+        currentInterval = Random.Range(minEyeChangeInterval, maxEyeChangeInterval);
+        Debug.Log($"Nuevo intervalo del ojo: {currentInterval:F2}s");
     }
 
-    //Reiniciar cabello
-    void ResetHair()
+    void BlowNextHair()
     {
-        if (hair)
-            hair.localPosition = new Vector3(0, 0, 0);
+        if (hairStrands.Count == 0) return;
+
+
+        // Si ya se apartaron todos los mechones
+        if (nextHairIndex >= hairStrands.Count)
+        {
+            if (infoText)
+                infoText.text = "¡Revelaste el rostro de Sadako!";
+            return;
+        }
+
+        Transform hair = hairStrands[nextHairIndex];
+        nextHairIndex++;
+
+        //Mover mechón de forma natural, sin volver atrás
+        hair.DOKill();
+        Vector3 startPos = hair.localPosition;
+        Vector3 blowPos = startPos + new Vector3(0.3f, 0, Random.Range(-0.05f, 0.05f));
+
+        hair.DOLocalMove(blowPos, 0.4f)
+            .SetEase(Ease.OutQuad)
+            .OnStart(() =>
+            {
+                // Pequeño efecto de “temblor” inicial
+                hair.DOPunchPosition(new Vector3(0.1f, 0, 0), 0.3f, 5, 0.8f);
+            });
+
+        // Si ya es el último mechón, mensaje final
+        if (nextHairIndex == hairStrands.Count)
+        {
+            if (infoText)
+                infoText.text = "¡Revelaste completamente el rostro de Sadako!";
+        }
+    }
+
+    void ResetAllHair()
+    {
+        foreach (Transform h in hairStrands)
+        {
+            h.DOKill();
+            h.DOLocalMove(Vector3.zero, 0.5f).SetEase(Ease.InOutQuad);
+        }
+        nextHairIndex = 0;
     }
 }
