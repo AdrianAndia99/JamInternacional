@@ -13,4 +13,12 @@ public abstract class MinigameManager : MonoBehaviour
     {
         OnStart?.Invoke();
     }
+    public void Win()
+    {
+        OnWin?.Invoke();
+    }
+    public void Defeat()
+    {
+        OnDefeat?.Invoke();
+    }
 }
