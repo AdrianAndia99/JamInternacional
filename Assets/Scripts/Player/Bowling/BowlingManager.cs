@@ -7,6 +7,7 @@ public class BowlingManager : MonoBehaviour
 
     [Header("Configuración")]
     public float checkDelay = 3f; // tiempo para esperar a que los pinos terminen de moverse
+    [SerializeField] private AudioClipSO StrikeSound;
 
     private bool checking = false;
 
@@ -30,6 +31,7 @@ public class BowlingManager : MonoBehaviour
         // Determinar resultado
         if (fallenPins == pins.Length)
         {
+            StrikeSound.PlayOneShoot();
             Debug.Log("STRIKE!!! Todos los pinos caídos");
         }
         else if (fallenPins >= pins.Length / 2)

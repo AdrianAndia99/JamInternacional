@@ -41,6 +41,12 @@ public class SadakoBlowGame : MonoBehaviour
     [Header("Sadako - Lógica de juego")]
     [SerializeField] private float minEyeChangeInterval;
     [SerializeField] private float maxEyeChangeInterval;
+
+    [Header("Audios")]
+    [SerializeField] private AudioClipSO Grito;
+    [SerializeField] private AudioClipSO risa;
+    [SerializeField] private AudioClipSO soplido;
+
     private float currentInterval;
     private bool eyeHappy = false;
     private float eyeTimer = 0f;
@@ -116,6 +122,8 @@ public class SadakoBlowGame : MonoBehaviour
         {
             hasBlownThisCycle = true;
 
+            soplido.PlayOneShoot();
+
             if (eyeHappy)
             {
                 if (infoText)
@@ -126,6 +134,7 @@ public class SadakoBlowGame : MonoBehaviour
             {
                 if (infoText)
                     infoText.text = "¡Soplaste en mal momento! Has perdido.";
+                Grito.PlayOneShoot();
                 ResetAllHair();
                 SetEyeState(false);
             }
@@ -162,6 +171,9 @@ public class SadakoBlowGame : MonoBehaviour
             if (renderer != null && renderer.material.HasProperty("_BaseColor"))
                 renderer.material.SetColor("_BaseColor", happy ? GoodEye : BadEye);
         }
+
+        if (happy)
+            risa.PlayOneShoot();
     }
 
     void SetRandomInterval()

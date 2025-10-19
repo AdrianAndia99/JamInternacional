@@ -30,6 +30,9 @@ public class JackOBowlingController : MonoBehaviour
     [SerializeField] CinemachineCamera camStatic;
     [SerializeField] TeleDisplayController TVDC;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioClipSO PumpkinSound;
+
     private Vector2 moveInput;
     private Vector2 angleInput;
 
@@ -104,6 +107,7 @@ public class JackOBowlingController : MonoBehaviour
             isThrown = true;
             attempts--;
 
+            PumpkinSound.PlayOneShoot();
             Vector3 direction = Quaternion.Euler(0, transform.eulerAngles.y, 0) * Vector3.forward;
             rb.AddForce(direction * force, ForceMode.Impulse);
 

@@ -3000,6 +3000,9 @@ MonoBehaviour:
   GoodEye: {r: 0.049967036, g: 0.38679248, b: 0, a: 0}
   minEyeChangeInterval: 1
   maxEyeChangeInterval: 2
+  Grito: {fileID: 11400000, guid: 6087cfa2e7bcee2498c22dfcb771b79d, type: 2}
+  risa: {fileID: 11400000, guid: 5786a38d16119704fabded8e2def48f8, type: 2}
+  soplido: {fileID: 11400000, guid: 30b72a3677d3d194d955457b706385b5, type: 2}
   hasBlownThisCycle: 0
 --- !u!1 &4550851926220550989
 GameObject:
