@@ -46,6 +46,9 @@ public class GodzillaController : MonoBehaviour
     [Tooltip("Grosor del rayo al final")]
     [SerializeField] private float laserEndWidth = 0.3f;
     
+    [Tooltip("Duración del rayo láser en segundos (cuánto tiempo permanece activo)")]
+    [SerializeField] private float laserDuration = 9f;
+    
     [Tooltip("Layer de los enemigos (crea un layer 'GodzillaEnemy' y asígnalo aquí)")]
     [SerializeField] private LayerMask enemyLayer;
 
@@ -343,12 +346,14 @@ public class GodzillaController : MonoBehaviour
 
         laserBeam.SetPosition(1, end);
 
-        // FASE 2: Mantener el rayo activo durante el resto del audio
-        // Del segundo 16 al 25 = 9 segundos totales
-        // Ya usamos 0.3s en crecimiento, quedan ~8.4s para mantener
-        // Usaremos 0.3s para el fade, así que mantenemos por 8.4s
-        // FASE 3: Desvanecimiento (0.3 segundos)
+        // FASE 2: Mantener el rayo activo durante la duración configurada
         float fadeDuration = 0.3f;
+        float maintainDuration = laserDuration - growDuration - fadeDuration;
+        
+        Debug.Log($"⚡ Manteniendo rayo activo por {maintainDuration:F1} segundos");
+        yield return new WaitForSeconds(maintainDuration);
+
+        // FASE 3: Desvanecimiento (0.3 segundos)
         elapsed = 0f;
 
         AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);

@@ -64,4 +64,3 @@ public class CandyCatchManager : MonoBehaviour
         timerText.text = "Tiempo: " + Mathf.CeilToInt(timeRemaining);
     }
 }
-

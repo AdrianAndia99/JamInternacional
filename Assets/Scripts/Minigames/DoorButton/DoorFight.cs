@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class DoorFight : MonoBehaviour
 {
@@ -44,19 +45,25 @@ public class DoorFight : MonoBehaviour
     [Tooltip("Texto del botón (opcional, para feedback visual)")]
     [SerializeField] private TextMeshProUGUI buttonText;
 
-    [Header("UI - Paneles de Resultado")]
+   /* [Header("UI - Paneles de Resultado")]
     [Tooltip("Panel que se muestra al ganar")]
     [SerializeField] private GameObject victoryPanel;
     
     [Tooltip("Panel que se muestra al perder")]
-    [SerializeField] private GameObject defeatPanel;
+    [SerializeField] private GameObject defeatPanel; */ // paneles de victoria y derrota
 
-    [Header("Audio (Opcional)")]
+    /*[Header("Audio (Opcional)")]
     [Tooltip("AudioClipSO para victoria")]
     [SerializeField] private AudioClipSO victoryAudio;
     
     [Tooltip("AudioClipSO para derrota")]
-    [SerializeField] private AudioClipSO defeatAudio;
+    [SerializeField] private AudioClipSO defeatAudio; */  //referencias al audio
+    
+    [Tooltip("AudioClipSO para el efecto de la puerta (loop)")]
+    [SerializeField] private AudioClipSO doorEffectAudio;
+    
+    [Tooltip("Retraso antes de iniciar el audio de la puerta (en segundos)")]
+    [SerializeField] private float doorAudioDelay = 1f;
 
     // Estado del juego
     private float playerPercentage = 0f;
@@ -76,8 +83,8 @@ public class DoorFight : MonoBehaviour
         }
 
         // Ocultar paneles de resultado
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (defeatPanel != null) defeatPanel.SetActive(false);
+      //  if (victoryPanel != null) victoryPanel.SetActive(false);
+       // if (defeatPanel != null) defeatPanel.SetActive(false); //desactivar paneles de victoria y derrota
 
         // Configurar el botón
         if (actionButton != null)
@@ -140,6 +147,12 @@ public class DoorFight : MonoBehaviour
         Debug.Log("🎮 ¡Juego iniciado! Mantén la puerta abierta por 10 segundos.");
         
         UpdateUI();
+        
+        // Iniciar el audio de la puerta con delay
+        if (doorEffectAudio != null)
+        {
+            StartCoroutine(StartDoorAudioWithDelay());
+        }
     }
 
     /// <summary>
@@ -206,23 +219,23 @@ public class DoorFight : MonoBehaviour
     /// </summary>
     private void UpdateUI()
     {
-        // Actualizar texto de porcentaje del jugador
+        // Actualizar texto de porcentaje del jugador (solo número)
         if (playerPercentageText != null)
         {
-            playerPercentageText.text = $"Jugador: {playerPercentage:F0}%";
+            playerPercentageText.text = $"{playerPercentage:F0}%";
         }
 
-        // Actualizar texto de porcentaje de la IA
+        // Actualizar texto de porcentaje de la IA (solo número)
         if (aiPercentageText != null)
         {
-            aiPercentageText.text = $"IA: {aiPercentage:F0}%";
+            aiPercentageText.text = $"{aiPercentage:F0}%";
         }
 
-        // Actualizar texto del temporizador
+        // Actualizar texto del temporizador (solo tiempo)
         if (timerText != null)
         {
             float timeRemaining = gameDuration - gameTimer;
-            timerText.text = $"Tiempo: {timeRemaining:F1}s";
+            timerText.text = $"{timeRemaining:F1}s";
         }
     }
 
@@ -238,17 +251,20 @@ public class DoorFight : MonoBehaviour
 
         Debug.Log("🎉 ¡VICTORIA! Mantuviste la puerta abierta.");
 
+        // Detener el audio de la puerta
+        StopDoorAudio();
+
         // Reproducir audio de victoria
-        if (victoryAudio != null)
+      /*  if (victoryAudio != null)
         {
             victoryAudio.PlayOneShoot();
-        }
+        }*/  //si ganas reproduce audio de victoria
 
         // Mostrar panel de victoria
-        if (victoryPanel != null)
+       /* if (victoryPanel != null)
         {
             victoryPanel.SetActive(true);
-        }
+        }*/  //mostrar panel de victoria
 
         // Deshabilitar botón
         if (actionButton != null)
@@ -269,17 +285,20 @@ public class DoorFight : MonoBehaviour
 
         Debug.Log("💀 ¡DERROTA! La IA cerró la puerta completamente.");
 
+        // Detener el audio de la puerta
+        StopDoorAudio();
+
         // Reproducir audio de derrota
-        if (defeatAudio != null)
+       /* if (defeatAudio != null)
         {
             defeatAudio.PlayOneShoot();
-        }
+        }*/  //si pierdes reproduce audio de derrota
 
         // Mostrar panel de derrota
-        if (defeatPanel != null)
+       /* if (defeatPanel != null)
         {
             defeatPanel.SetActive(true);
-        }
+        }*/  //mostrar panel de derrota
 
         // Deshabilitar botón
         if (actionButton != null)
@@ -294,8 +313,8 @@ public class DoorFight : MonoBehaviour
     public void RestartGame()
     {
         // Ocultar paneles
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (defeatPanel != null) defeatPanel.SetActive(false);
+       // if (victoryPanel != null) victoryPanel.SetActive(false);
+       // if (defeatPanel != null) defeatPanel.SetActive(false);
 
         // Habilitar botón
         if (actionButton != null)
@@ -313,5 +332,33 @@ public class DoorFight : MonoBehaviour
     public void ReturnToMenu()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MenuTest");
+    }
+
+    /// <summary>
+    /// Corrutina que inicia el audio de la puerta con delay
+    /// </summary>
+    private IEnumerator StartDoorAudioWithDelay()
+    {
+        // Esperar el delay configurado
+        yield return new WaitForSeconds(doorAudioDelay);
+
+        // Reproducir el audio en loop
+        if (doorEffectAudio != null)
+        {
+            doorEffectAudio.PlayLoop();
+            Debug.Log("🚪 Audio de puerta iniciado en loop");
+        }
+    }
+
+    /// <summary>
+    /// Detiene el audio de la puerta
+    /// </summary>
+    private void StopDoorAudio()
+    {
+        if (doorEffectAudio != null)
+        {
+            doorEffectAudio.StopPlay();
+            Debug.Log("🚪 Audio de puerta detenido");
+        }
     }
 }
