@@ -385,6 +385,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5467045204674137340, guid: e533d751e98615c4bb53abe2a15e35e2, type: 3}
+      propertyPath: gameDuration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5467045204674137340, guid: e533d751e98615c4bb53abe2a15e35e2, type: 3}
+      propertyPath: aiIncrementSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5467045204674137340, guid: e533d751e98615c4bb53abe2a15e35e2, type: 3}
+      propertyPath: maxPlayerDecrement
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5467045204674137340, guid: e533d751e98615c4bb53abe2a15e35e2, type: 3}
+      propertyPath: minPlayerDecrement
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8222559539657444760, guid: e533d751e98615c4bb53abe2a15e35e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.6491435
