@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
@@ -7,13 +6,9 @@ public class SadakoController : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private Animator _animator;
 
-    private Coroutine _positionCoroutine;
-
     private Vector3 _targetPosition;
 
     private bool _canMove = true;
-
-    private bool _isLeftSided;
 
 
     [SerializeField] private MinigameManager_1 _manager;
@@ -66,13 +61,13 @@ public class SadakoController : MonoBehaviour
     {
         if (other.transform.tag == "DefeatLimit")
         {
-            _manager.OnDefeat?.Invoke();
+            _manager.Defeat();
         }
         else if (other.transform.tag == "Player")
         {
             _animator.SetTrigger("IsDead");
             GetComponent<MoveTween>().KillCurrent();
-            _manager.OnWin?.Invoke();
+            _manager.Win();
         }
     }
 }

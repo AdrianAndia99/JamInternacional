@@ -1630,6 +1630,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _targetTransform: {fileID: 0}
+  _targetVector: {x: 0, y: 0, z: 0}
+  _vectorMove: 0
 --- !u!65 &2511636922123902727
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1946,6 +1948,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _targetTransform: {fileID: 7544016506678975482}
+  _targetVector: {x: 0, y: 0, z: 0}
+  _vectorMove: 0
 --- !u!1 &2706551119291474898
 GameObject:
   m_ObjectHideFlags: 0
@@ -2165,7 +2169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Priority:
-    Enabled: 0
+    Enabled: 1
     m_Value: 0
   OutputChannel: 1
   StandbyUpdate: 2
@@ -3503,10 +3507,35 @@ MonoBehaviour:
         m_CallState: 2
   OnWin:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: bf92fecb89b0862478cba424d442ee1c, type: 2}
+        m_TargetAssemblyTypeName: Assets.Scripts.GameEvents.GameEvent, Assembly-CSharp
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnDefeat:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 21a74b32131d0ab4596955d22b865a25, type: 2}
+        m_TargetAssemblyTypeName: Assets.Scripts.GameEvents.GameEvent, Assembly-CSharp
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  CinamechineCamera: {fileID: 0}
 --- !u!1 &7317789361114112668
 GameObject:
   m_ObjectHideFlags: 0

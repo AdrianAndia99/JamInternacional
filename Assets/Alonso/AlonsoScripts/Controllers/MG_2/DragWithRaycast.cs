@@ -21,13 +21,15 @@ public class DragWithRaycast : MonoBehaviour
             Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
+                if (hit.collider.name == "CANDY")
+                {
+                    _manager.Win();
+                    Debug.Log("CANDY");
+                    return;
+                }
+
                 if (hit.transform.TryGetComponent<Rigidbody>(out Rigidbody rb))
                 {
-                    if (hit.transform.name == "CANDY")
-                    {
-                        _manager.OnWin?.Invoke();
-                        return;
-                    }
 
                     rb.useGravity = false;
 
