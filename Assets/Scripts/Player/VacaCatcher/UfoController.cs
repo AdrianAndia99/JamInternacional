@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 public class UfoController : MonoBehaviour
 {
     [Header("Movimiento")]
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float minX;
-    [SerializeField] private float maxX;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float minX = -8f;
+    [SerializeField] private float maxX = 8f;
 
     [Header("Rayo")]
     [SerializeField] private GameObject rayPrefab;
@@ -19,55 +19,72 @@ public class UfoController : MonoBehaviour
     private Vector2 moveInput;
     private bool canShoot = true;
     private bool isDead = false;
+    private bool isAbducting = false; // cuando abduce a la vaca
+    private bool gameEnded = false;
+
+    private RayController currentRay;
+
+    private void OnEnable()
+    {
+        // Reset de estado por si se reusa el prefab
+        moveInput = Vector2.zero;
+        canShoot = true;
+        isDead = false;
+        isAbducting = false;
+        gameEnded = false;
+
+        animator.Rebind();
+        animator.Update(0f);
+    }
+
+    private void OnDisable()
+    {
+        // Limpieza: si hay rayo activo, desvincular eventos
+        if (currentRay != null)
+        {
+            currentRay.onFinish -= OnRayFinished;
+            currentRay.onMiss -= OnMissedShot;
+            currentRay.onAbductionSuccess -= OnAbductionSuccess;
+        }
+    }
 
     private void Update()
     {
-        if (isDead) return; // no puede moverse si está muerto
+        if (isDead || isAbducting) return;
 
-        // Movimiento horizontal
         Vector3 move = new Vector3(moveInput.x, 0f, 0f);
         transform.Translate(move * moveSpeed * Time.deltaTime);
 
-        // Limitar movimiento dentro de (-8, 8)
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x, minX, maxX);
         transform.position = pos;
 
-        // Actualizar animaciones
         UpdateAnimation();
     }
 
     private void UpdateAnimation()
     {
-        // Estado de movimiento
         bool isMoving = Mathf.Abs(moveInput.x) > 0.1f;
         animator.SetBool("isMoving", isMoving);
 
-        // Flip sprite según dirección
         if (isMoving)
-            spriteRenderer.flipX = moveInput.x > 0;
+            spriteRenderer.flipX = moveInput.x < 0;
     }
 
-    // --- CALLBACKS DEL NUEVO INPUT SYSTEM ---
+    // --- INPUT SYSTEM CALLBACKS ---
 
-    // Movimiento (Vector2)
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (isDead) return; // no puede moverse si está muerto
+        if (isDead || isAbducting) return;
 
-        // Leemos el vector completo (x, y)
         moveInput = context.ReadValue<Vector2>();
-
-        // Si la acción termina, reseteamos el movimiento
         if (context.canceled)
             moveInput = Vector2.zero;
     }
 
-    // Disparo
     public void OnFire(InputAction.CallbackContext context)
     {
-        // Solo dispara cuando la acción se ejecuta (performed)
-        if (context.performed && canShoot)
+        if (context.performed && canShoot && !isDead && !isAbducting)
         {
             ShootRay();
         }
@@ -76,26 +93,44 @@ public class UfoController : MonoBehaviour
     private void ShootRay()
     {
         canShoot = false;
+        animator.SetTrigger("shoot");
 
         GameObject ray = Instantiate(rayPrefab, rayOrigin.position, Quaternion.identity);
-        RayController rc = ray.GetComponent<RayController>();
-        rc.onFinish += ResetShot;
-        rc.onMiss += OnMissedShot; // Nuevo: evento si falla
+        currentRay = ray.GetComponent<RayController>();
+
+        // Subscribir eventos
+        currentRay.onFinish += OnRayFinished;
+        currentRay.onMiss += OnMissedShot;
+        currentRay.onAbductionSuccess += OnAbductionSuccess;
     }
 
-    private void ResetShot()
+    private void OnAbductionSuccess()
     {
-        // Permitir disparar nuevamente si no ha muerto
+        if (gameEnded) return;
+
+        gameEnded = true; // bloquea todo
+        // El alien deja de moverse mientras abduce
+        isAbducting = true;
+        moveInput = Vector2.zero;
+        animator.SetBool("isMoving", false);
+        Debug.Log("Alien abduciendo vaca...");
+    }
+
+    private void OnRayFinished()
+    {
+        if (gameEnded) return;
+
+        // Solo vuelve a poder disparar si el juego no terminó
         if (!isDead)
             canShoot = true;
     }
+
     private void OnMissedShot()
     {
-        canShoot = false;
         isDead = true;
+        canShoot = false;
         moveInput = Vector2.zero;
-
         animator.SetTrigger("dead");
-        Debug.Log("El OVNI falló el disparo, perdiste.");
+        Debug.Log("OVNI falló el tiro. GAME OVER.");
     }
 }

@@ -7,6 +7,7 @@ public class TeleDisplayController : MonoBehaviour
     [Header("Referencias de Teles")]
     public TextMeshProUGUI teleKeyboardText;
     public TextMeshProUGUI teleMouseText;
+    public TextMeshProUGUI TimerText;
 
     [Header("Mensaje Inicial (Canvas de la Bola)")]
     public TextMeshProUGUI startMessageText;
@@ -24,7 +25,7 @@ public class TeleDisplayController : MonoBehaviour
         // Mostrar mensaje inicial en canvas de la bola
         if (startMessageText != null)
         {
-            startMessageText.text = "Solo tienes 3 intentos para realizar un strike";
+            startMessageText.text = "Tienes solo 2 intentos";
             StartCoroutine(HideStartMessageAfterDelay());
         }
     }
@@ -38,8 +39,9 @@ public class TeleDisplayController : MonoBehaviour
     private void ShowInitialInstructions()
     {
         if (teleKeyboardText != null)
+            teleKeyboardText.fontSize = 8;
             teleKeyboardText.text =
-                "Controles Teclado:\nteclas Iz, De Mover calabaza\n Tecla Abajo Fijar posición\nTecla arriba Lanzar";
+                "Controles Teclado:\nflecha Iz, Dr Mover calabaza\n flecha Abajo Fijar posición\nflecha arriba Lanzar";
 
         if (teleMouseText != null)
             teleMouseText.text =
@@ -64,9 +66,22 @@ public class TeleDisplayController : MonoBehaviour
         }
         else
         {
+            teleKeyboardText.fontSize = 12;
+            teleKeyboardText.alignment = TextAlignmentOptions.Midline;
+            teleMouseText.alignment = TextAlignmentOptions.Midline;
             teleKeyboardText.text = $"Pinos derribados: {knockedPins}";
             teleMouseText.text = $"Intentos restantes: {remainingTries}";
 
         }
+    }
+    public void UpdateTimerUI(float time)
+    {
+        TimerText.text = $"Tiempo: {time:F1}s";
+    }
+
+    public void ShowGameOver()
+    {
+        teleKeyboardText.text = "¡Fin del juego!";
+        teleMouseText.text = "No lograste el strike";
     }
 }

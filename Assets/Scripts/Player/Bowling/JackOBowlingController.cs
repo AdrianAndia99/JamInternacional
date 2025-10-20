@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 using Unity.Mathematics;
+using System.Collections;
 
 public class JackOBowlingController : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class JackOBowlingController : MonoBehaviour
     [SerializeField] private float minThrowForce = 5f;
     [SerializeField] private float maxThrowForce = 20f;
     [SerializeField] private float stopTimeToReset = 2f; // tiempo que puede estar quieta antes de perder intento
+    [SerializeField] private float strikeTimeLimit = 20f;
 
     [Header("Rotaci�n visual del mesh")]
     public Transform meshObject;        // el hijo visual (as�gnalo en el inspector)
@@ -38,25 +40,74 @@ public class JackOBowlingController : MonoBehaviour
 
     private bool isFrozen = false;
     private bool isThrown = false;
-    private int attempts = 3;
+    public bool timerActive = false;
+    private bool firstThrow = false;
+    private bool gameEnded = false;
+
+    private int attempts = 2;
 
     private float powerValue = 0f;
     private float powerDirection = 1f;
     private float powerSpeed = 1f;
     private bool isCharging = false;
-    private float throwForce = 0f;
-
     private float stillTimer = 0f;
+    private float timeRemaining;
+
     private quaternion InitialRotation;
     private Transform child;
+    private void OnEnable()
+    {
+        ResetGame();
+    }
+
+    private void OnDisable()
+    {
+        // Opcional: detener físicas por seguridad
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+    }
     private void Start()
     {
         child = transform.GetChild(0);
-        Debug.Log(child);
         InitialRotation = child.transform.rotation;
+    }
+
+    public void ResetGame()
+    {
+        Debug.Log("Reiniciando minijuego de bolos...");
+
+        // Variables base
+        attempts = 2;
+        isFrozen = false;
+        isThrown = false;
+        firstThrow = false;
+        timerActive = true;
+        gameEnded = false;
+        isCharging = false;
+        stillTimer = 0f;
+
+        // Reiniciar tiempo
+        timeRemaining = strikeTimeLimit;
+
+        // Resetear posición y rotación de la bola
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        transform.position = SpawnPumpkin.position;
+        transform.rotation = SpawnPumpkin.rotation;
+        if (meshObject != null) meshObject.localRotation = quaternion.identity;
+
+        // Resetear UI
         sliderContainer.SetActive(false);
+        powerSlider.value = 0f;
+
+        // Cámaras
         if (camBall != null) camBall.Priority = 1;
         if (camStatic != null) camStatic.Priority = 0;
+
+        StartCoroutine(ResetAfterDelay(1.5f));
     }
 
     // --- INPUT CALLBACKS ---
@@ -84,6 +135,8 @@ public class JackOBowlingController : MonoBehaviour
 
     public void OnThrow(InputAction.CallbackContext context)
     {
+        if (gameEnded) return;
+
         // Empieza a cargar la fuerza
         if (context.started && isFrozen && !isThrown && attempts > 0)
         {
@@ -111,12 +164,31 @@ public class JackOBowlingController : MonoBehaviour
             Vector3 direction = Quaternion.Euler(0, transform.eulerAngles.y, 0) * Vector3.forward;
             rb.AddForce(direction * force, ForceMode.Impulse);
 
-            TVDC.OnFirstThrow();
+            if (!firstThrow)
+            {
+                firstThrow = true;
+                TVDC.OnFirstThrow();
+            }
         }
     }
 
     private void Update()
     {
+        if (gameEnded) return;
+
+        // Control del tiempo de strike
+        if (timerActive)
+        {
+            timeRemaining -= Time.deltaTime;
+            TVDC?.UpdateTimerUI(timeRemaining);
+
+            if (timeRemaining <= 0f)
+            {
+                timerActive = false;
+                EndGame();
+            }
+        }
+
         if (isThrown)
         {
             CheckIfStopped();
@@ -198,6 +270,13 @@ public class JackOBowlingController : MonoBehaviour
         }
         Debug.Log("Intentos restantes: " + attempts);
 
+        // Si ya no quedan intentos, terminar
+        if (attempts <= 0)
+        {
+            timerActive = false;
+            TVDC?.ShowGameOver();
+            EndGame();
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -220,9 +299,38 @@ public class JackOBowlingController : MonoBehaviour
             if (camStatic != null) camStatic.Priority = 1;
         }
     }
+    // --- UI desde Manager ---
     public void UpdateScoreUI(int knockedPins)
     {
         bool strike = knockedPins >= 10;
+
+        if (strike)
+        {
+            timerActive = false;
+        }
+
         TVDC?.UpdateTeleScores(knockedPins, attempts, strike);
+    }
+    private void EndGame()
+    {
+        timerActive = false;
+        gameEnded = true;
+        Debug.Log("Fin del minijuego: sin tiempo o sin intentos.");
+
+        // Aquí puedes desactivar el prefab si quieres automáticamente:
+        // gameObject.SetActive(false);
+    }
+
+    private IEnumerator ResetAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Llamamos al manager para reiniciar pinos y bola
+        var manager = FindObjectOfType<BowlingManager>();
+        if (manager != null)
+        {
+            manager.ResetAllPins();
+            Debug.Log("Minijuego reseteado después del delay");
+        }
     }
 }

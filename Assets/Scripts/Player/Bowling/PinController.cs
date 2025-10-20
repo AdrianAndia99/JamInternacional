@@ -10,13 +10,18 @@ public class PinController : MonoBehaviour
     private Vector3 initialPosition;
     private Quaternion initialRotation;
 
-    private void Start()
+    private void OnEnable()
     {
         initialPosition = transform.position;
         initialRotation = transform.rotation;
-        materialInstance = GetComponentInChildren<Renderer>().material;
+
+        if (materialInstance == null)
+            materialInstance = GetComponentInChildren<Renderer>().material;
+
         if (materialInstance != null)
             materialInstance.SetColor("_OutlineColor", Color.green);
+
+        isDown = false;
     }
 
     public bool IsDown()

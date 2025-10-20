@@ -5,34 +5,39 @@ public class RayController : MonoBehaviour
 {
     public Action onFinish;
     public Action onMiss;
+    public Action onAbductionSuccess; // nuevo evento
 
-    [SerializeField] private float activeTime = 1f; // tiempo de verificación (1 segundo)
+    [SerializeField] private float activeTime = 1f;
     private bool hitSomething = false;
+    private Coroutine checkRoutine;
 
     private void OnEnable()
     {
-        // Empieza la comprobación de fallo
-        StartCoroutine(CheckMiss());
+        hitSomething = false;
+        checkRoutine = StartCoroutine(CheckMiss());
+    }
+
+    private void OnDisable()
+    {
+        if (checkRoutine != null)
+            StopCoroutine(checkRoutine);
     }
 
     private IEnumerator CheckMiss()
     {
         yield return new WaitForSeconds(activeTime);
 
-        // Si después de 1 segundo no tocó nada se considera fallo
         if (!hitSomething)
         {
             onMiss?.Invoke();
-            this.gameObject.SetActive(false);
         }
 
-        // Finaliza el rayo (destruye o desactiva)
         EndRay();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Cow"))
+        if (other.CompareTag("Cow") && !hitSomething)
         {
             hitSomething = true;
 
@@ -40,7 +45,10 @@ public class RayController : MonoBehaviour
             if (cow != null)
                 cow.OnCaptured();
 
-            Debug.Log("¡Vaca abducida! Ganaste");
+            onAbductionSuccess?.Invoke();
+
+            Debug.Log("¡Vaca abducida!");
+            StopAllCoroutines(); // detener comprobación de fallo
             EndRay();
         }
     }
@@ -48,5 +56,6 @@ public class RayController : MonoBehaviour
     private void EndRay()
     {
         onFinish?.Invoke();
+        //gameObject.SetActive(false); // desactivar en vez de destruir prefab reusable
     }
 }
