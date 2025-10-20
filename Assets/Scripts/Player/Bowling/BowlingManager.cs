@@ -6,7 +6,7 @@ public class BowlingManager : MonoBehaviour
     public JackOBowlingController jack; // referencia al lanzador
 
     [Header("Configuración")]
-    public float checkDelay = 3f; // tiempo para esperar a que los pinos terminen de moverse
+    public float checkDelay; // tiempo para esperar a que los pinos terminen de moverse
     [SerializeField] private AudioClipSO StrikeSound;
 
     private bool checking = false;
@@ -61,5 +61,15 @@ public class BowlingManager : MonoBehaviour
         jack.ResetAttemptFromManager();
 
         checking = false;
+    }
+    public void ResetAllPins()
+    {
+        foreach (var pin in pins)
+        {
+            if (pin != null)
+                pin.ResetPin();
+        }
+
+        Debug.Log("Todos los pinos fueron reiniciados.");
     }
 }
