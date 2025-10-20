@@ -68,20 +68,30 @@ public class BalloonMinigame : MonoBehaviour
         UpdateBalloonSprite();
 
         // Comprobar victoria (si el globo se mantiene en rango medio)
-        float midMin = (balloonStages.Length - 1) * 0.4f;
-        float midMax = (balloonStages.Length - 1) * 0.6f;
+        float midMin = (balloonStages.Length - 1) * 0.35f;
+        float midMax = (balloonStages.Length - 1) * 0.55f;
 
-        if (currentLevel >= midMin && currentLevel <= midMax)
+        // El tiempo solo empieza a contar si el globo está al menos en el sprite 5
+        if (currentLevel >= 5f)
         {
-            winTimer += Time.deltaTime;
-            if (winTimer >= winTime)
+            if (currentLevel >= midMin && currentLevel <= midMax)
             {
-                Win();
+                winTimer += Time.deltaTime;
+                if (winTimer >= winTime)
+                {
+                    Win();
+                }
+            }
+            else
+            {
+                // Si se sale del rango medio, el contador retrocede lentamente
+                winTimer = Mathf.Max(0, winTimer - Time.deltaTime * 0.5f);
             }
         }
         else
         {
-            winTimer = Mathf.Max(0, winTimer - Time.deltaTime * 0.5f);
+            // Si aún no llega al sprite 5, el tiempo no avanza ni retrocede
+            winTimer = 0f;
         }
 
         UpdateTimerUI();
