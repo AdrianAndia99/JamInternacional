@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class BalloonMinigame : MonoBehaviour
@@ -8,6 +9,10 @@ public class BalloonMinigame : MonoBehaviour
     [SerializeField] private Image balloonImage;         // Imagen del globo (UI)
     [SerializeField] private Sprite[] balloonStages;     // Sprites desde vacío inflado explota
     [SerializeField] private Animator clownAnimator;     // Animator del payaso
+    
+    [Header("Audios")]
+    [SerializeField] private AudioClipSO inflatingClip;    // Sonido mientras infla
+    [SerializeField] private AudioClipSO explodeClip;      // Sonido al explotar
 
     [Header("Configuración del globo")]
     [SerializeField] private float inflateSpeed = 1f;    // Qué tan rápido sube el nivel (por segundo)
@@ -17,6 +22,8 @@ public class BalloonMinigame : MonoBehaviour
     private float currentLevel = 0f;  // Nivel de inflado (0 = vacío, balloonStages.Length-1 = explotar)
     private float winTimer = 0f;
     private bool gameOver = false;
+
+    private bool isInflatingSoundPlaying = false;
 
     void Update()
     {
@@ -30,14 +37,17 @@ public class BalloonMinigame : MonoBehaviour
             case "silencio":
                 currentLevel -= deflateSpeed * Time.deltaTime;
                 clownAnimator.Play("Idle");
+                StopInflatingSound();
                 break;
 
             case "sonido débil":
                 currentLevel += inflateSpeed * Time.deltaTime;
                 clownAnimator.Play("Reir");
+                PlayInflatingSound();
                 break;
 
             case "sonido fuerte":
+                StopInflatingSound();
                 Explode();
                 return;
         }
@@ -70,12 +80,30 @@ public class BalloonMinigame : MonoBehaviour
         spriteIndex = Mathf.Clamp(spriteIndex, 0, balloonStages.Length - 1);
         balloonImage.sprite = balloonStages[spriteIndex];
     }
+    void PlayInflatingSound()
+    {
+        if (inflatingClip && !isInflatingSoundPlaying)
+        {
+            inflatingClip.PlayLoop();
+            isInflatingSoundPlaying = true;
+        }
+    }
 
+    void StopInflatingSound()
+    {
+        if (isInflatingSoundPlaying)
+        {
+            inflatingClip.StopPlay();
+            isInflatingSoundPlaying = false;
+        }
+    }
     void Explode()
     {
         gameOver = true;
         clownAnimator.Play("Despedirse");
 
+        if (explodeClip)
+            explodeClip.PlayOneShoot();
         // Usa el último sprite como globo explotado si lo tienes
         balloonImage.sprite = balloonStages[balloonStages.Length - 1];
         Debug.Log("El globo explotó. Has perdido.");
