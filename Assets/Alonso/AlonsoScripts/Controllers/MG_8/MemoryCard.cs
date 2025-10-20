@@ -3,48 +3,53 @@ using UnityEngine.UI;
 
 public class MemoryCard : MonoBehaviour
 {
-    public Sprite frontSprite;  // imagen del frente
-    public Sprite backSprite;   // imagen del reverso
+    public Image frontImage;
+    public Image backImage;
+    private MemoryGameManager manager;
+    private Sprite frontSprite;
+    private bool isRevealed = false;
+    private bool isMatched = false;
 
-    private Image cardImage;
-    private bool isFlipped = false;
-    private MemoryGameManager gameManager;
-
-    public void SetCard(Sprite front, Sprite back, MemoryGameManager manager)
+    public void SetupCard(MemoryGameManager gameManager, Sprite sprite)
     {
-        frontSprite = front;
-        backSprite = back;
-        gameManager = manager;
-
-        cardImage = GetComponent<Image>();
-        cardImage.sprite = backSprite; // comienza volteada
+        manager = gameManager;
+        frontSprite = sprite;
+        frontImage.sprite = frontSprite;
+        FlipBack();
     }
 
-    public void OnClick()
+    public void OnCardClicked()
     {
-        // evita reactivar si ya está volteada
-        if (!isFlipped)
-        {
-            Flip();
-            gameManager.CardRevealed(this);
-        }
+        if (isMatched || isRevealed) return;
+        Flip();
+        manager.CardSelected(this);
     }
 
     public void Flip()
     {
-        isFlipped = !isFlipped;
-        cardImage.sprite = isFlipped ? frontSprite : backSprite;
+        isRevealed = true;
+        frontImage.gameObject.SetActive(true);
+        backImage.gameObject.SetActive(false);
     }
 
-    public Sprite GetFrontSprite()
+    public void FlipBack()
+    {
+        isRevealed = false;
+        frontImage.gameObject.SetActive(false);
+        backImage.gameObject.SetActive(true);
+    }
+
+    public void HideCard()
+    {
+        isMatched = true;
+        gameObject.SetActive(false);
+    }
+
+    public Sprite GetSprite()
     {
         return frontSprite;
     }
-
-    public void DisableCard()
-    {
-        GetComponent<Button>().interactable = false;
-    }
 }
+
 
 

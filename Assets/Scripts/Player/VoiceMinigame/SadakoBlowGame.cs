@@ -7,7 +7,7 @@ using DG.Tweening;
 
 public class SadakoBlowGame : MonoBehaviour
 {
-    [Header("Micrófono")]
+    [Header("Micrï¿½fono")]
     [SerializeField] private string micName;
     private AudioClip micClip;
 
@@ -23,7 +23,7 @@ public class SadakoBlowGame : MonoBehaviour
     [SerializeField] private Color loudColor = Color.red;
     [SerializeField] private Image fillImage;
 
-    [Header("Umbrales de detección")]
+    [Header("Umbrales de detecciï¿½n")]
     [SerializeField] private float weakThreshold;
     [SerializeField] private float strongThreshold;
 
@@ -35,7 +35,7 @@ public class SadakoBlowGame : MonoBehaviour
     [SerializeField] private Color BadEye;
     [SerializeField] private Color GoodEye;
 
-    [Header("Sadako - Lógica de juego")]
+    [Header("Sadako - Lï¿½gica de juego")]
     [SerializeField] private float minEyeChangeInterval;
     [SerializeField] private float maxEyeChangeInterval;
 
@@ -76,20 +76,20 @@ public class SadakoBlowGame : MonoBehaviour
             }
         }
 
-        // Reiniciar micrófono
+        // Reiniciar micrï¿½fono
         if (Microphone.devices.Length > 0)
         {
             micName = Microphone.devices[0];
             micClip = Microphone.Start(micName, true, 1, 44100);
-            Debug.Log("Micrófono detectado: " + micName);
+            Debug.Log("Micrï¿½fono detectado: " + micName);
         }
         else
         {
-            Debug.LogWarning("No se encontró micrófono.");
+            Debug.LogWarning("No se encontrï¿½ micrï¿½fono.");
         }
 
         if (infoText)
-            infoText.text = "Espera... sopla cuando el ojo esté FELIZ";
+            infoText.text = "Espera... sopla cuando el ojo estï¿½ FELIZ";
     }
 
     void OnDisable()
@@ -114,7 +114,7 @@ public class SadakoBlowGame : MonoBehaviour
         if (fillImage)
             fillImage.color = Color.Lerp(quietColor, loudColor, volume);
 
-        // Cambiar estado del ojo periódicamente
+        // Cambiar estado del ojo periï¿½dicamente
         eyeTimer += Time.deltaTime;
         if (eyeTimer >= currentInterval)
         {
@@ -124,7 +124,7 @@ public class SadakoBlowGame : MonoBehaviour
             hasBlownThisCycle = false;
         }
 
-        // Detección de soplido fuerte
+        // Detecciï¿½n de soplido fuerte
         if (volume > strongThreshold && !hasBlownThisCycle)
         {
             hasBlownThisCycle = true;
@@ -133,7 +133,7 @@ public class SadakoBlowGame : MonoBehaviour
             if (eyeHappy)
             {
                 if (infoText)
-                    infoText.text = "¡Buen soplido! El cabello se aparta...";
+                    infoText.text = "ï¿½Buen soplido! El cabello se aparta...";
                 BlowNextHair();
             }
             else
@@ -206,7 +206,7 @@ public class SadakoBlowGame : MonoBehaviour
             {
                 hair.gameObject.SetActive(false);
 
-                // Si ya no quedan más mechones
+                // Si ya no quedan mï¿½s mechones
                 if (nextHairIndex >= hairStrands.Count)
                 {
                     WinGame();
@@ -235,7 +235,7 @@ public class SadakoBlowGame : MonoBehaviour
     {
         gameOver = true;
         if (infoText)
-            infoText.text = "¡Revelaste completamente el rostro de Sadako!";
+            infoText.text = "ï¿½Revelaste completamente el rostro de Sadako!";
         Grito.PlayOneShoot();
         SetEyeState(false);
     }
@@ -244,7 +244,7 @@ public class SadakoBlowGame : MonoBehaviour
     {
         gameOver = true;
         if (infoText)
-            infoText.text = "¡Soplaste en mal momento! Has perdido.";
+            infoText.text = "ï¿½Soplaste en mal momento! Has perdido.";
         SetEyeState(false);
         ResetAllHair();
     }
