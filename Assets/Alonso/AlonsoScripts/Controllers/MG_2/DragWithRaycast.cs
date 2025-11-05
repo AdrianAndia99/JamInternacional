@@ -1,4 +1,3 @@
-using System.Threading;
 using UnityEngine;
 
 public class DragWithRaycast : MonoBehaviour
@@ -7,9 +6,9 @@ public class DragWithRaycast : MonoBehaviour
     private Transform _selectedObject;
     private float _zDistance;
 
-
     [SerializeField] private MinigameManager_2 _manager;
     [SerializeField] private TimeManager _timer;
+
     void Start()
     {
         _cam = Camera.main;
@@ -24,7 +23,6 @@ public class DragWithRaycast : MonoBehaviour
                 if (hit.collider.name == "CANDY")
                 {
                     _manager.Win();
-                    Debug.Log("CANDY");
                     return;
                 }
 
@@ -45,10 +43,9 @@ public class DragWithRaycast : MonoBehaviour
             mousePos.z = _zDistance;
             Vector3 worldPos = _cam.ScreenToWorldPoint(mousePos);
 
-            //_selectedObject.position = new Vector3(worldPos.x, worldPos.y, _selectedObject.position.z);
-
             _selectedObject.position = Vector3.Lerp(_selectedObject.position, new Vector3(worldPos.x, worldPos.y, _selectedObject.position.z), Time.deltaTime * 10f);
         }
+
         if (Input.GetMouseButtonUp(0))
         {
             if (_selectedObject != null)

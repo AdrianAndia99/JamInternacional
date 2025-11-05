@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
   m_GUID: ae5ef3b53780a9041ba7529f0eb887d7
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: f2e665dfc99a8d9418f79d122a3793a0
+    m_Address: Assets/Alonso/AlonsoSprites/MG_8Sprites/Cards.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 90f276338e5ff73449581ed838734c1c, type: 2}
   m_SchemaSet:

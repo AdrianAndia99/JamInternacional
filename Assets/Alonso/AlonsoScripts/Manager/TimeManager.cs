@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class TimeManager : MonoBehaviour
 {
     [Header("Time Settings")]
     [SerializeField] private bool countDown = true;
-    [SerializeField] private int startTimeInSeconds = 10;
+    [SerializeField] private float startTimeInSeconds = 10;
 
     [Header("Events")]
     [SerializeField] public UnityEvent OnStartTimer;
@@ -13,65 +14,63 @@ public class TimeManager : MonoBehaviour
     [SerializeField] public UnityEvent<int> OnSecondPassed;
     [SerializeField] public UnityEvent OnTimeFinished;
 
-
-    private float elapsedTime = 0f;
-    private int lastWholeSecond = 0;
+    private Coroutine timerCoroutine;
     private bool isRunning = false;
+    private float currentTime;
 
-    private void Update()
-    {
-        if (!isRunning) return;
-
-        elapsedTime += Time.deltaTime;
-        int timeValue;
-
-        if (countDown)
-        {
-            timeValue = Mathf.Max(0, startTimeInSeconds - Mathf.FloorToInt(elapsedTime));
-            if (timeValue < lastWholeSecond)
-            {
-                lastWholeSecond = timeValue;
-                OnSecondPassed?.Invoke(timeValue);
-
-                if (timeValue == 0)
-                {
-                    StopTimer();
-                    OnTimeFinished?.Invoke();
-                }
-            }
-        }
-        else
-        {
-            timeValue = Mathf.FloorToInt(elapsedTime);
-            if (timeValue > lastWholeSecond)
-            {
-                lastWholeSecond = timeValue;
-                OnSecondPassed?.Invoke(timeValue);
-            }
-        }
-    }
     public void StartTimer()
     {
         if (isRunning) return;
+
         isRunning = true;
-        elapsedTime = 0f;
-        lastWholeSecond = countDown ? startTimeInSeconds : 0;
+        currentTime = countDown ? startTimeInSeconds : 0f;
         OnStartTimer?.Invoke();
+
+        timerCoroutine = StartCoroutine(TimerRoutine());
     }
     public void StopTimer()
     {
         if (!isRunning) return;
+
         isRunning = false;
+
+        if (timerCoroutine != null)
+            StopCoroutine(timerCoroutine);
+
         OnStopTimer?.Invoke();
     }
     public void ResetTimer()
     {
-        elapsedTime = 0f;
-        lastWholeSecond = countDown ? startTimeInSeconds : 0;
+        StopTimer();
+        currentTime = countDown ? startTimeInSeconds : 0f;
     }
-    public int GetCurrentTimeInSeconds()
+    private IEnumerator TimerRoutine()
     {
-        return countDown ? Mathf.Max(0, startTimeInSeconds - Mathf.FloorToInt(elapsedTime)) : Mathf.FloorToInt(elapsedTime);
+        int lastWholeSecond = Mathf.FloorToInt(currentTime);
+        OnSecondPassed?.Invoke(lastWholeSecond);
+
+        while (isRunning)
+        {
+            yield return null;
+            currentTime += (countDown ? -Time.deltaTime : Time.deltaTime);
+
+            int wholeSecond = Mathf.FloorToInt(currentTime);
+            if (wholeSecond != lastWholeSecond)
+            {
+                lastWholeSecond = wholeSecond;
+                OnSecondPassed?.Invoke(wholeSecond);
+            }
+
+            if (countDown && currentTime <= 0f)
+            {
+                currentTime = 0f;
+                OnTimeFinished?.Invoke();
+                StopTimer();
+                yield break;
+            }
+        }
     }
+    public float GetCurrentTime() => currentTime;
+    public int GetCurrentTimeInSeconds() => Mathf.FloorToInt(currentTime);
     public bool IsRunning => isRunning;
 }

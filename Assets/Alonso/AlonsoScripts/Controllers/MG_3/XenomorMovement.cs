@@ -24,7 +24,6 @@ public class XenomorMovement : MonoBehaviour
     {
         StopCoroutine(_moveCoroutine);
         _moveCoroutine = null;
-        Debug.Log("STOP");
     }
     public IEnumerator MoveCycle()
     {
